@@ -10,7 +10,7 @@
     {
       "step": "Publish",
       "bold": "Catalog-wide scalability",
-      "desc": "— syndicate creator video across PDPs and checkout effortlessly"
+      "desc": "— syndicate approved creator UGC videos sitewide across PDPs effortlessly"
     },
     {
       "step": "Convert",
@@ -20,12 +20,12 @@
     {
       "step": "Attribute",
       "bold": "AI-powered execution",
-      "desc": "— automated \"link click free\" creator UGC for sales lift attribution"
+      "desc": "— automated \"link click free\" creator UGC engagement for sales lift attribution"
     },
     {
-      "step": "Pay Creators",
-      "bold": "Performance-based creator UGC",
-      "desc": "— Automated creator onboarding and commission payouts"
+      "step": "Pay ",
+      "bold": "Effortless payment workflow",
+      "desc": "— Automated creator onboarding, commission approval and payouts"
     }
   ]
 }
