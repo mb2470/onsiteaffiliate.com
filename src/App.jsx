@@ -95,7 +95,7 @@ function Navbar() {
           <span className="nav-logo-text">ONSITE<br/>AFFILIATE</span>
         </Link>
 
-        <button className="hamburger" onClick={() => setOpen(!open)} aria-label="Menu">
+        <button className="hamburger" onClick={() => { setOpen(!open); setSolOpen(false); setResOpen(false); }} aria-label="Menu">
           <span className={open ? "bar open" : "bar"} />
           <span className={open ? "bar open" : "bar"} />
           <span className={open ? "bar open" : "bar"} />
@@ -104,10 +104,10 @@ function Navbar() {
         <div className={`nav-links ${open ? "mobile-open" : ""}`}>
           <div
             className="nav-dropdown"
-            onMouseEnter={() => setSolOpen(true)}
-            onMouseLeave={() => setSolOpen(false)}
+            onMouseEnter={() => { if (window.innerWidth > 768) setSolOpen(true); }}
+            onMouseLeave={() => { if (window.innerWidth > 768) setSolOpen(false); }}
           >
-            <button className="nav-link dropdown-trigger">
+            <button className="nav-link dropdown-trigger" onClick={() => { setSolOpen(!solOpen); setResOpen(false); }}>
               Solutions <span className="caret">▾</span>
             </button>
             {solOpen && (
@@ -131,10 +131,10 @@ function Navbar() {
 
           <div
             className="nav-dropdown"
-            onMouseEnter={() => setResOpen(true)}
-            onMouseLeave={() => setResOpen(false)}
+            onMouseEnter={() => { if (window.innerWidth > 768) setResOpen(true); }}
+            onMouseLeave={() => { if (window.innerWidth > 768) setResOpen(false); }}
           >
-            <button className="nav-link dropdown-trigger">
+            <button className="nav-link dropdown-trigger" onClick={() => { setResOpen(!resOpen); setSolOpen(false); }}>
               Resources <span className="caret">▾</span>
             </button>
             {resOpen && (

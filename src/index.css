@@ -1238,6 +1238,13 @@ p {
     display: flex;
   }
 
+  .nav-links .nav-link,
+  .nav-links .dropdown-trigger {
+    width: 100%;
+    padding: 14px 0;
+    font-size: 1.1rem;
+  }
+
   .nav-dropdown {
     width: 100%;
   }
@@ -1247,8 +1254,13 @@ p {
     background: transparent;
     border: none;
     backdrop-filter: none;
-    padding: 0 0 0 16px;
+    padding: 0 0 8px 16px;
     animation: none;
+  }
+
+  .dropdown-menu a {
+    padding: 10px 0;
+    font-size: 1rem;
   }
 
   .nav-cta {
