@@ -273,7 +273,7 @@ function HomePage() {
         <div className="container">
           <Reveal>
             <h2 className="section-title">
-              How <span className="gradient-text">Onsite Commission</span>s Work
+              How <span className="gradient-text">Onsite Commissions</span> Work
             </h2>
           </Reveal>
           <div className="steps-grid">
