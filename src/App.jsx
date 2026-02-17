@@ -10,6 +10,7 @@ const routes = {
   "/resources": "resources",
   "/brand-terms": "brand-terms",
   "/data-processing-addendum": "dpa",
+  "/privacy": "privacy",
 };
 
 function useRoute() {
@@ -196,6 +197,7 @@ function Footer() {
             <h4>Legal</h4>
             <Link to="/brand-terms">Brand Terms</Link>
             <Link to="/data-processing-addendum">Data Processing Addendum</Link>
+            <Link to="/privacy">Privacy Policy</Link>
           </div>
           <div>
             <h4>Connect</h4>
@@ -1039,6 +1041,71 @@ function DPAPage() {
   );
 }
 
+/* ───────────── PRIVACY POLICY PAGE ───────────── */
+function PrivacyPage() {
+  return (
+    <LegalPage title="Privacy Policy" lastUpdated="February 5, 2026">
+      <h3>1. Introduction</h3>
+      <p>Welcome to Onsite Affiliate ("we," "us," or "our"). We operate onsiteaffiliate.com (the "Site"). We respect your privacy and are committed to protecting the personal information you share with us. This Privacy Policy explains how we collect, use, and disclose information when you visit our Site.</p>
+
+      <h3>2. Information We Collect</h3>
+      <p>We may collect information that identifies, relates to, or could reasonably be linked to you ("Personal Information"). This includes:</p>
+      <ul>
+        <li><strong>Identifiers:</strong> Name, email address, or IP address (collected via cookies or contact forms).</li>
+        <li><strong>Commercial Information:</strong> Records of video engagement and product purchases for the purposes of attributing commissions.</li>
+        <li><strong>Internet Activity:</strong> Browsing history, search history, and interactions with our website or advertisements.</li>
+      </ul>
+
+      <h3>3. How We Collect Information</h3>
+      <ul>
+        <li><strong>Directly from You:</strong> When you use our website or contact us.</li>
+        <li><strong>Automatically:</strong> Through cookies, web beacons, and other tracking technologies as you navigate the Site.</li>
+        <li><strong>From Third Parties:</strong> We may receive data from our partners to calculate and pay commissions.</li>
+      </ul>
+
+      <h3>4. Use of Your Information</h3>
+      <p>We use the information we collect to:</p>
+      <ul>
+        <li>Operate and maintain the Site.</li>
+        <li>Track video engagements and process commissions.</li>
+        <li>Send newsletters or promotional materials (if you have opted in).</li>
+        <li>Analyze Site traffic and improve user experience.</li>
+      </ul>
+
+      <h3>5. Sharing Your Information</h3>
+      <p>We do not sell your personal information. However, we may share data with:</p>
+      <ul>
+        <li><strong>Onsite Partners:</strong> To track video engagements and purchases made through video content.</li>
+        <li><strong>Service Providers:</strong> Such as email marketing platforms or website hosting providers.</li>
+        <li><strong>Legal Requirements:</strong> If required by law or to protect our rights.</li>
+      </ul>
+
+      <h3>6. Cookies and Tracking Technologies</h3>
+      <p>We use cookies to enhance your experience. You can instruct your browser to refuse all cookies or to indicate when a cookie is being sent. Note that some parts of the Site may not function properly without cookies.</p>
+
+      <h3>7. Your California Privacy Rights (CCPA/CPRA)</h3>
+      <p>As a California resident, you have the following rights:</p>
+      <ul>
+        <li><strong>Right to Know:</strong> You can request a list of the personal information we have collected about you.</li>
+        <li><strong>Right to Delete:</strong> You can request that we delete your personal information.</li>
+        <li><strong>Right to Opt-Out:</strong> You have the right to opt-out of the "sale" or "sharing" of your personal information. (Note: We do not currently sell your data).</li>
+        <li><strong>Right to Non-Discrimination:</strong> We will not discriminate against you for exercising these rights.</li>
+      </ul>
+
+      <h3>8. "Do Not Track" Signals</h3>
+      <p>Under CalOPPA, we must disclose how we respond to "Do Not Track" (DNT) signals. Currently, our Site does not change its behavior based on DNT browser settings, as there is no industry-wide standard for these signals.</p>
+
+      <h3>9. Third-Party Links</h3>
+      <p>Our Site contains links to third-party websites. We are not responsible for the privacy practices of these external sites. We encourage you to read their privacy policies.</p>
+
+      <h3>10. Contact Us</h3>
+      <p>If you have questions about this Privacy Policy, please contact us at:</p>
+      <p><strong>Email:</strong> legal@onsiteaffiliate.com</p>
+      <p><strong>Address:</strong> Onsite Affiliate Partners, LLC, 30025 Alicia Pkwy #20-2472 Laguna Niguel, CA 92677</p>
+    </LegalPage>
+  );
+}
+
 /* ───────────── APP ROUTER ───────────── */
 export default function App() {
   const path = useRoute();
@@ -1065,6 +1132,9 @@ export default function App() {
       break;
     case "/data-processing-addendum":
       page = <DPAPage />;
+      break;
+    case "/privacy":
+      page = <PrivacyPage />;
       break;
     default:
       page = <HomePage />;
