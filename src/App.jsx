@@ -101,6 +101,8 @@ function Navbar() {
           <span className={open ? "bar open" : "bar"} />
         </button>
 
+        <div className={`mobile-overlay ${open ? "active" : ""}`} onClick={() => setOpen(false)} />
+
         <div className={`nav-links ${open ? "mobile-open" : ""}`}>
           <div
             className="nav-dropdown"
