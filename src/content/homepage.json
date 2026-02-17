@@ -1,0 +1,31 @@
+{
+  "heroHeadline": "Increase Sales by Multiplying Onsite",
+  "heroHighlight": "User Generated Video",
+  "heroHeadlineEnd": "Content by 5x",
+  "missingLinkHeadline": "We Provide the \"Missing Link\" to Enable Onsite Commissions for UGC",
+  "comparisonHeadline": "An Onsite Commission Program is the Most Efficient and Effective Way to Scale UGC",
+  "bottomStatement1": "Brands increase UGC conversions.",
+  "bottomStatement2": "Creators receive passive income for content already created.",
+  "steps": [
+    {
+      "step": "Publish",
+      "bold": "Catalog-wide scalability",
+      "desc": "— syndicate creator video across PDPs and checkout effortlessly"
+    },
+    {
+      "step": "Convert",
+      "bold": "Built for optimization",
+      "desc": "— test, learn, and scale UGC that increase conversions"
+    },
+    {
+      "step": "Attribute",
+      "bold": "AI-powered execution",
+      "desc": "— automated \"link-free\" content attribution and commission calculation"
+    },
+    {
+      "step": "Pay Creators",
+      "bold": "Performance-based creator UGC",
+      "desc": "— Pay only when content drives incremental sales."
+    }
+  ]
+}
