@@ -24,22 +24,20 @@ function useRoute() {
   return path;
 }
 
-function Link({ to, children, className, onClick }) {
-  const hasAnchor = to.includes("#") && !to.startsWith("#");
+function Link({ to, children, className, onClick, scrollTo }) {
   return (
     
-      href={`#${to}`}
+      href={`#${to.split("#")[0]}`}
       className={className}
       onClick={(e) => {
+        const anchor = to.includes("#") ? to.split("#")[1] : null;
+        window.scrollTo(0, 0);
         onClick?.();
-        if (hasAnchor) {
-          const anchorId = to.split("#")[1];
+        if (anchor) {
           setTimeout(() => {
-            const el = document.getElementById(anchorId);
+            const el = document.getElementById(anchor);
             if (el) el.scrollIntoView({ behavior: "smooth" });
-          }, 100);
-        } else {
-          window.scrollTo(0, 0);
+          }, 200);
         }
       }}
     >
