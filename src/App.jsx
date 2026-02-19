@@ -14,9 +14,10 @@ const routes = {
 };
 
 function useRoute() {
-  const [path, setPath] = useState(window.location.hash.slice(1) || "/");
+  const getPath = () => (window.location.hash.slice(1) || "/").split("#")[0];
+  const [path, setPath] = useState(getPath());
   useEffect(() => {
-    const handler = () => setPath(window.location.hash.slice(1) || "/");
+    const handler = () => setPath(getPath());
     window.addEventListener("hashchange", handler);
     return () => window.removeEventListener("hashchange", handler);
   }, []);
@@ -24,13 +25,22 @@ function useRoute() {
 }
 
 function Link({ to, children, className, onClick }) {
+  const hasAnchor = to.includes("#") && !to.startsWith("#");
   return (
-    <a
+    
       href={`#${to}`}
       className={className}
       onClick={(e) => {
-        window.scrollTo(0, 0);
         onClick?.();
+        if (hasAnchor) {
+          const anchorId = to.split("#")[1];
+          setTimeout(() => {
+            const el = document.getElementById(anchorId);
+            if (el) el.scrollIntoView({ behavior: "smooth" });
+          }, 100);
+        } else {
+          window.scrollTo(0, 0);
+        }
       }}
     >
       {children}
