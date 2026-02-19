@@ -25,13 +25,16 @@ function useRoute() {
 }
 
 function Link({ to, children, className, onClick }) {
+  const basePath = to.split("#")[0];
+  const anchor = to.includes("#") ? to.split("#")[1] : null;
   return (
-    <a>
-      href={`#${to.split("#")[0]}`}
+    <a
+      href={`#${basePath}`}
       className={className}
       onClick={(e) => {
-        const anchor = to.includes("#") ? to.split("#")[1] : null;
-        window.scrollTo(0, 0);
+        if (!anchor) {
+          window.scrollTo(0, 0);
+        }
         onClick?.();
         if (anchor) {
           setTimeout(() => {
@@ -149,14 +152,14 @@ function Navbar() {
             </button>
             {resOpen && (
               <div className="dropdown-menu">
-                <Link to="/resources#blog" onClick={() => { setOpen(false); setResOpen(false); }}>
-                Blog
+                <Link to="/resources" onClick={() => { setOpen(false); setResOpen(false); }}>
+                  Blog
                 </Link>
-                <Link to="/resources#case-studies" onClick={() => { setOpen(false); setResOpen(false); }}>
-                Case Studies
+                <Link to="/resources" onClick={() => { setOpen(false); setResOpen(false); }}>
+                  Case Studies
                 </Link>
-                <Link to="/resources#faq" onClick={() => { setOpen(false); setResOpen(false); }}>
-                FAQ
+                <Link to="/resources" onClick={() => { setOpen(false); setResOpen(false); }}>
+                  FAQ
                 </Link>
               </div>
             )}
@@ -604,7 +607,7 @@ function ResourcesPage() {
   return (
     <main>
       {/* BLOG */}
-      <section className="page-hero" id="blog">
+      <section className="page-hero">
         <div className="hero-glow" />
         <div className="container">
           <Reveal>
@@ -635,7 +638,7 @@ function ResourcesPage() {
       {activeBlog && <BlogModal blog={activeBlog} onClose={() => setActiveBlog(null)} />}
 
       {/* CASE STUDIES */}
-      <section className="section-black" id="case-studies">
+      <section className="section-black">
         <div className="container">
           <Reveal>
             <h2>
@@ -735,7 +738,7 @@ function ResourcesPage() {
       </section>
 
       {/* FAQ */}
-       <section className="section-black" id="faq">
+      <section className="section-black">
         <div className="container">
           <Reveal>
             <h2>
