@@ -9,7 +9,7 @@ const routes = {
   "/solutions/measurement": "measurement",
   "/resources": "resources",
   "/brand-terms": "brand-terms",
-  "/data-processing-addendum": "dpa",
+  "/data-processing-agreement": "dpa",
   "/privacy": "privacy",
 };
 
@@ -444,7 +444,7 @@ function Footer() {
           <div>
             <h4>Legal</h4>
             <Link to="/brand-terms">Brand Terms</Link>
-            <Link to="/data-processing-addendum">Data Processing Addendum</Link>
+            <Link to="/data-processing-agreement">Data Processing Agreement</Link>
             <Link to="/privacy">Privacy Policy</Link>
           </div>
           <div>
@@ -1170,10 +1170,10 @@ function BrandTermsPage() {
   );
 }
 
-/* ───────────── DATA PROCESSING ADDENDUM PAGE ───────────── */
+/* ───────────── DATA PROCESSING AGREEMENT PAGE ───────────── */
 function DPAPage() {
   return (
-    <LegalPage title="Data Processing Addendum" lastUpdated="February 15, 2026">
+    <LegalPage title="Data Processing Agreement" lastUpdated="February 15, 2026">
       <p>This Data Processing Agreement ("DPA") forms part of the Agreement between the Parties and is effective as of the effective date of the applicable Order Form or Brand Insertion Order (the "Agreement"). In the event of conflict, this DPA governs with respect to Personal Data processing.</p>
       <p>This DPA applies where Onsite Affiliate processes Personal Data on behalf of Brand in connection with affiliate marketing, onsite video syndication, engagement tracking, purchase attribution, analytics, and commission calculation services.</p>
       <p>Applicable Data Protection Laws include, where relevant, the <strong>General Data Protection Regulation (GDPR)</strong> and the <strong>California Privacy Rights Act (CPRA)</strong>, as well as other applicable U.S. state privacy laws.</p>
@@ -1382,7 +1382,7 @@ export default function App() {
     case "/brand-terms":
       page = <BrandTermsPage />;
       break;
-    case "/data-processing-addendum":
+    case "/data-processing-agreement":
       page = <DPAPage />;
       break;
     case "/privacy":
