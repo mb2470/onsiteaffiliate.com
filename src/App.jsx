@@ -26,7 +26,7 @@ function useRoute() {
 
 function Link({ to, children, className, onClick }) {
   return (
-    
+    <a>
       href={`#${to.split("#")[0]}`}
       className={className}
       onClick={(e) => {
