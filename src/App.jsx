@@ -620,7 +620,7 @@ function ResourcesPage() {
   return (
     <main>
       {/* BLOG */}
-      <section className="page-hero">
+      <section className="page-hero" id="blog">
         <div className="hero-glow" />
         <div className="container">
           <Reveal>
@@ -651,7 +651,7 @@ function ResourcesPage() {
       {activeBlog && <BlogModal blog={activeBlog} onClose={() => setActiveBlog(null)} />}
 
       {/* CASE STUDIES */}
-      <section className="section-black">
+      <section className="section-black" id="case-studies">
         <div className="container">
           <Reveal>
             <h2>
@@ -751,7 +751,7 @@ function ResourcesPage() {
       </section>
 
       {/* FAQ */}
-      <section className="section-black">
+      <section className="section-black" id="faq">
         <div className="container">
           <Reveal>
             <h2>
