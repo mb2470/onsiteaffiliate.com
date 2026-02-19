@@ -14,15 +14,11 @@
     },
     {
       "q": "How do you track Onsite Commissions?",
-      "a": "We have an SDK that connects to virtually any video player and checkout engine to report playbacks and purchases which we then use to calculate and pay commissions to creators based on your attribution model and commission rate."
-    },
-    {
-      "q": "What is Programmatic UGC Acquisition?",
-      "a": "A data-driven, automated strategy used by brands like Amazon to source, license, deploy and monetize creator User-Generated-Content (UGC) at a massive scale to deliver meaningful incremental sales."
+      "a": "We have an SDK that installs with a single line of code and connects to virtually any video player and checkout engine to report playbacks and purchases which we then use to calculate and pay commissions to creators based on your attribution model and commission rate."
     },
     {
       "q": "Can I set my attribution model and commission rate?",
-      "a": "With our Onsite Commission solution you will have complete control over what you pay creators and when you pay it. For example you can set what qualifies as a creator UGC view, the attribution window for qualifying a purchase and the commission rate you pay to creators after a qualifying purchase is made."
+      "a": "With our Onsite Commission Engine you will have complete control over what you pay creators and when you pay it. For example you can set what qualifies as a creator video view, the attribution window for qualifying a purchase and the commission rate you pay to creators after a qualifying purchase is made."
     },
     {
       "q": "Can I use my current affiliate platform for Onsite Commissions?",
@@ -30,15 +26,15 @@
     },
     {
       "q": "What services do you offer?",
-      "a": "We offer a fully managed and automated Onsite Commissions solution that integrates with your existing stack so that you don't have to write a single line of new code to launch and scale an onsite commission program. No matter where you are at in your journey to launching and scaling an Onsite Commission program we can help you!"
+      "a": "We offer a fully managed and automated Onsite Commissions solution that integrates with your existing stack so that you don't have to write tons of new code to launch and scale an onsite commission program. No matter where you are at in your journey to launching and scaling an Onsite Commission program we can help you!"
     },
     {
       "q": "What makes you different?",
-      "a": "You already have UGC creators and the onsite video player - now all you need is an engine to scale it to every product page on your site. Unlike traditional affiliate and UGC platforms and agencies we provide a complete Onsite Commission solution that enables you to scale your results because you only pay UGC creators for their content after it provides an incremental conversion result."
+      "a": "You already have a creator platform and onsite video player - now all you need is an engine to scale it to every product page on your site. Unlike traditional affiliate and UGC platforms and agencies we provide a complete Onsite Commission solution that enables you to scale your results because you only pay UGC creators for their content after it provides an incremental conversion result."
     },
     {
       "q": "What's your pricing model?",
-      "a": "We offer flexible pricing based on your existing UGC creator stack and complexity. After an initial consultation, we'll provide a transparent quote with no hidden costs. You will always have full control and transparency over your Onsite Commission program."
+      "a": "We charge proportionally for the incremental sales we help create, not just for software. After an initial consultation, we'll provide a transparent quote with no hidden costs. You will always have full control and transparency over your Onsite Commission program."
     },
     {
       "q": "What's it like to work with you?",
@@ -46,11 +42,11 @@
     },
     {
       "q": "How do I get started?",
-      "a": "Getting started is simple. Reach out through our contact form or schedule a free consultation call — we'll walk you through the next steps and answer any questions along the way."
+      "a": "Getting started is simple. Reach out through our info@onsiteaffiliate.com email to schedule a free consultation call — we'll walk you through the next steps and answer any questions along the way."
     },
     {
       "q": "How can I contact you?",
-      "a": "You can reach us anytime via our contact page or email us at support@onsiteaffiliate.com. We aim to respond quickly — usually within one business day."
+      "a": "You can reach us anytime via our contact page or email us at info@onsiteaffiliate.com. We aim to respond quickly — usually within one business day."
     }
   ]
 }
