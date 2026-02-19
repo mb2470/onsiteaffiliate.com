@@ -416,6 +416,7 @@ p {
 
 /* ─── FLYWHEEL / GRAPHICS ─── */
 .flywheel-wrap img,
+.flywheel-wrap video,
 .matrix-wrap img,
 .graphic-wrap img {
   border-radius: 16px;
