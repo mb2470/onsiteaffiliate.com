@@ -49,6 +49,19 @@ function Link({ to, children, className, onClick }) {
   );
 }
 
+function goToSection(sectionId) {
+  window.location.hash = "/resources";
+  var tryScroll = function(attempts) {
+    var el = document.getElementById(sectionId);
+    if (el) {
+      el.scrollIntoView({ behavior: "smooth" });
+    } else if (attempts < 10) {
+      setTimeout(function() { tryScroll(attempts + 1); }, 200);
+    }
+  };
+  setTimeout(function() { tryScroll(0); }, 100);
+}
+
 /* ───────────── CONTENT IMPORTS ───────────── */
 import homepageContent from "./content/homepage.json";
 import aboutContent from "./content/about.json";
@@ -152,12 +165,15 @@ function Navbar() {
             </button>
             {resOpen && (
               <div className="dropdown-menu">
-                <a href="#/resources" onClick={(e) => { e.preventDefault(); window.location.hash = "/resources"; setOpen(false); setResOpen(false); setTimeout(() => { document.getElementById("blog")?.scrollIntoView({ behavior: "smooth" }); }, 300); }}>
-                 Blog </a>
-                <a href="#/resources" onClick={(e) => { e.preventDefault(); window.location.hash = "/resources"; setOpen(false); setResOpen(false); setTimeout(() => { document.getElementById("case-studies")?.scrollIntoView({ behavior: "smooth" }); }, 300); }}>
-                Case Studies </a>
-                <a href="#/resources" onClick={(e) => { e.preventDefault(); window.location.hash = "/resources"; setOpen(false); setResOpen(false); setTimeout(() => { document.getElementById("faq")?.scrollIntoView({ behavior: "smooth" }); }, 300); }}>
-                FAQ </a>
+                <button onClick={() => { setOpen(false); setResOpen(false); goToSection("blog"); }}>
+                  Blog
+                </button>
+                <button onClick={() => { setOpen(false); setResOpen(false); goToSection("case-studies"); }}>
+                  Case Studies
+                </button>
+                <button onClick={() => { setOpen(false); setResOpen(false); goToSection("faq"); }}>
+                  FAQ
+                </button>
               </div>
             )}
           </div>
