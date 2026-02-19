@@ -508,7 +508,7 @@ function HomePage() {
           </Reveal>
           <Reveal delay={200}>
             <div className="flywheel-wrap">
-              <img src="/images/flywheel.png" alt="Onsite Affiliate Flywheel" />
+              <video src="/images/flywheel.mp4" autoPlay loop muted playsInline />
             </div>
           </Reveal>
         </div>
