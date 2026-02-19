@@ -104,8 +104,230 @@ function Reveal({ children, className = "", delay = 0 }) {
   );
 }
 
+/* ───────────── CALCULATOR LIGHTBOX ───────────── */
+function CalculatorLightbox({ isOpen, onClose }) {
+  const [step, setStep] = useState(1);
+  const [form, setForm] = useState({
+    skus: '', visitors: '', cr: '', aov: '', coverage: '', placement: '',
+    email: '', website: ''
+  });
+  const [results, setResults] = useState({ revenue: 0, lift: 0, rocs: 0 });
+  const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwTLGqhWFEMmLIy4bNlyRVWwkbl4gfYrMbZ8v9bmR7soK93bYQSPzORh2G9iZE9oZ8wIA/exec';
+
+  useEffect(() => {
+    if (isOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+      setStep(1);
+    }
+    return () => { document.body.style.overflow = ''; };
+  }, [isOpen]);
+
+  const update = (field, val) => setForm(prev => ({ ...prev, [field]: val }));
+
+  const calculate = () => {
+    const visitors = parseFloat(form.visitors) || 0;
+    const baselineCR = (parseFloat(form.cr) || 0) / 100;
+    const aov = parseFloat(form.aov) || 0;
+    const playbackRate = parseFloat(form.placement) || 0;
+    const existingCoverage = (parseFloat(form.coverage) || 0) / 100;
+    const liftMultiplier = 1.563;
+    const videoCR = baselineCR * liftMultiplier;
+    const watchers = visitors * playbackRate;
+    const nonWatchers = visitors * (1 - playbackRate);
+    const baselineSales = visitors * baselineCR * aov;
+    const salesWithVideo = watchers * videoCR * aov;
+    const salesWithout = nonWatchers * baselineCR * aov;
+    const salesWithUGC = salesWithVideo + salesWithout;
+    const incrementalRevenue = (salesWithUGC - baselineSales) * (1 - existingCoverage);
+    const commissionRate = 0.05;
+    const totalCommissions = salesWithVideo * commissionRate;
+    const rocs = totalCommissions > 0 ? incrementalRevenue / totalCommissions : 0;
+    const liftPct = baselineSales > 0 ? (incrementalRevenue / baselineSales) * 100 : 0;
+    setResults({ revenue: incrementalRevenue, lift: liftPct, rocs });
+  };
+
+  const submitToSheets = () => {
+    const placementEl = { '0.24234': 'Mostly Above The Fold', '0.19442': 'Both Above & Below The Fold', '0.13622': 'Mostly Below The Fold' };
+    const calcData = {
+      email: form.email, website: form.website, skus: form.skus,
+      visitors: form.visitors, baselineCR: form.cr, aov: form.aov,
+      existingCoverage: form.coverage || '0',
+      placement: placementEl[form.placement] || '',
+      incrementalRevenue: formatCurrency(results.revenue)
+    };
+    fetch(SCRIPT_URL, { method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(calcData) }).catch(() => {});
+  };
+
+  const goToStep = (target) => {
+    if (target === 2 && step === 1) {
+      if (!form.skus || !form.visitors || !form.cr || !form.aov || !form.placement) return;
+    }
+    if (target === 3 && step === 2) {
+      if (!form.email || !form.website) return;
+      const emailDomain = form.email.toLowerCase().split('@')[1];
+      if (!emailDomain || !form.website.toLowerCase().includes(emailDomain.split('.')[0])) {
+        alert("Please provide a valid company email that matches your website domain.");
+        return;
+      }
+      calculate();
+      submitToSheets();
+    }
+    setStep(target);
+  };
+
+  const formatCurrency = (val) => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(val);
+
+  const exportCSV = () => {
+    const csv = [
+      'Onsite Commission Opportunity Report', '',
+      'Company Email,' + form.email, 'Company Website,' + form.website, '',
+      'Input Parameters',
+      'Product SKUs,' + form.skus, 'Monthly Unique Visitors,' + form.visitors,
+      'Conversion Rate (%),' + form.cr, 'Average Order Value ($),' + form.aov,
+      'Existing UGC Coverage (%),' + (form.coverage || '0'), '',
+      'Results',
+      'Estimated Monthly Incremental Revenue,' + formatCurrency(results.revenue),
+      'Incremental Sales Lift,+' + results.lift.toFixed(1) + '%',
+      'Return on Commission Spend (ROCS),' + results.rocs.toFixed(1) + 'x',
+    ].join('\n');
+    const blob = new Blob([csv], { type: 'text/csv' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a'); a.href = url; a.download = 'onsite-commission-report.csv'; a.click();
+    URL.revokeObjectURL(url);
+  };
+
+  if (!isOpen) return null;
+
+  const stepDot = (num) => {
+    let cls = 'calc-step-dot';
+    if (num < step) cls += ' done';
+    else if (num === step) cls += ' active';
+    return <div className={cls}>{num < step ? '✓' : num}</div>;
+  };
+
+  return (
+    <div className="calc-overlay" onClick={(e) => { if (e.target.className === 'calc-overlay') onClose(); }}>
+      <div className="calc-lightbox">
+        <button className="calc-close" onClick={onClose}>✕</button>
+
+        <div className="calc-header">
+          <h2>Calculate Your <span className="gradient-text">Sales Lift</span></h2>
+          <p>See how much incremental revenue an Onsite Commission program can deliver for your business.</p>
+        </div>
+
+        <div className="calc-steps-bar">
+          {stepDot(1)}
+          <div className={`calc-step-line ${step > 1 ? 'active' : ''}`} />
+          {stepDot(2)}
+          <div className={`calc-step-line ${step > 2 ? 'active' : ''}`} />
+          {stepDot(3)}
+        </div>
+        <div className="calc-step-labels">
+          <span className={step === 1 ? 'active' : ''}>Customize</span>
+          <span className={step === 2 ? 'active' : ''}>Your Info</span>
+          <span className={step === 3 ? 'active' : ''}>Results</span>
+        </div>
+
+        <div className="calc-body">
+          {/* STEP 1 */}
+          {step === 1 && (
+            <div className="calc-panel">
+              <div className="calc-field-row">
+                <div className="calc-field">
+                  <label>Product SKUs</label>
+                  <input type="number" placeholder="e.g. 4,000" value={form.skus} onChange={e => update('skus', e.target.value)} />
+                </div>
+                <div className="calc-field">
+                  <label>Monthly Unique Visitors</label>
+                  <input type="number" placeholder="e.g. 1,000,000" value={form.visitors} onChange={e => update('visitors', e.target.value)} />
+                </div>
+              </div>
+              <div className="calc-field-row">
+                <div className="calc-field">
+                  <label>Conversion Rate (%)</label>
+                  <input type="number" placeholder="e.g. 1.6" step="0.1" value={form.cr} onChange={e => update('cr', e.target.value)} />
+                </div>
+                <div className="calc-field">
+                  <label>Average Order Value ($)</label>
+                  <input type="number" placeholder="e.g. 141" value={form.aov} onChange={e => update('aov', e.target.value)} />
+                </div>
+              </div>
+              <div className="calc-field-row">
+                <div className="calc-field">
+                  <label>Existing UGC Coverage (%)</label>
+                  <input type="number" placeholder="e.g. 25" value={form.coverage} onChange={e => update('coverage', e.target.value)} />
+                </div>
+                <div className="calc-field">
+                  <label>UGC Placement</label>
+                  <select value={form.placement} onChange={e => update('placement', e.target.value)}>
+                    <option value="" disabled>Select...</option>
+                    <option value="0.24234">Mostly Above the Fold</option>
+                    <option value="0.19442">Both Above &amp; Below</option>
+                    <option value="0.13622">Mostly Below the Fold</option>
+                  </select>
+                </div>
+              </div>
+              <div className="calc-nav">
+                <button className="calc-btn-next" onClick={() => goToStep(2)}>Continue →</button>
+              </div>
+            </div>
+          )}
+
+          {/* STEP 2 */}
+          {step === 2 && (
+            <div className="calc-panel">
+              <div className="calc-field">
+                <label>Company Email Address</label>
+                <input type="email" placeholder="you@company.com" value={form.email} onChange={e => update('email', e.target.value)} />
+              </div>
+              <div className="calc-field">
+                <label>Company Website</label>
+                <input type="text" placeholder="www.yourcompany.com" value={form.website} onChange={e => update('website', e.target.value)} />
+              </div>
+              <div className="calc-nav">
+                <button className="calc-btn-back" onClick={() => goToStep(1)}>← Back</button>
+                <button className="calc-btn-next" onClick={() => goToStep(3)}>Calculate My Sales Lift →</button>
+              </div>
+            </div>
+          )}
+
+          {/* STEP 3 */}
+          {step === 3 && (
+            <div className="calc-panel">
+              <div className="calc-results-card">
+                <div className="calc-result-label">Estimated Monthly Incremental Revenue</div>
+                <div className="calc-result-value">{formatCurrency(results.revenue)}</div>
+              </div>
+              <div className="calc-stats-row">
+                <div className="calc-stat-box">
+                  <div className="calc-stat-num">+{results.lift.toFixed(1)}%</div>
+                  <div className="calc-stat-label">Incremental Sales Lift</div>
+                </div>
+                <div className="calc-stat-box">
+                  <div className="calc-stat-num">{results.rocs.toFixed(1)}x</div>
+                  <div className="calc-stat-label">Return on Commission Spend at 5%</div>
+                </div>
+              </div>
+              <div className="calc-export-row">
+                <button className="calc-btn-export" onClick={exportCSV}>↓ Export CSV</button>
+                <button className="calc-btn-export" onClick={exportCSV}>⊞ Export to Sheets</button>
+              </div>
+              <button className="calc-btn-cta" onClick={() => { window.open('mailto:info@onsiteaffiliate.com?subject=Onsite Commission Inquiry', '_blank'); }}>
+                Begin Your Onsite Commission Journey →
+              </button>
+              <p className="calc-fine-print">Your data is never shared. Estimates based on industry benchmarks.</p>
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
 /* ───────────── NAVBAR ───────────── */
-function Navbar() {
+function Navbar({ onCalcOpen }) {
   const [open, setOpen] = useState(false);
   const [solOpen, setSolOpen] = useState(false);
   const [resOpen, setResOpen] = useState(false);
@@ -182,9 +404,9 @@ function Navbar() {
             Login
           </a>
 
-          <a href="https://calculator.onsiteaffiliate.com/" className="nav-cta" target="_blank" rel="noopener noreferrer" onClick={() => setOpen(false)}>
+          <button className="nav-cta" onClick={() => { setOpen(false); onCalcOpen(); }}>
             Calculate My Sales Lift
-          </a>
+          </button>
         </div>
       </div>
     </nav>
@@ -267,9 +489,9 @@ function HomePage() {
             </h1>
           </Reveal>
           <Reveal delay={200}>
-            <a href="https://calculator.onsiteaffiliate.com/" className="btn-primary" target="_blank" rel="noopener noreferrer">
+            <button className="btn-primary" onClick={() => window.__openCalc()}>
               Calculate My Sales Lift
-            </a>
+            </button>
           </Reveal>
         </div>
       </section>
@@ -446,9 +668,9 @@ function SolutionPage({ title, subtitle, image, pills }) {
         <div className="container centered">
           <Reveal>
             <h2>Ready to get started?</h2>
-            <a href="https://calculator.onsiteaffiliate.com/" className="btn-primary" target="_blank" rel="noopener noreferrer">
+            <button className="btn-primary" onClick={() => window.__openCalc()}>
               Calculate My Sales Lift
-            </a>
+            </button>
           </Reveal>
         </div>
       </section>
@@ -1135,6 +1357,10 @@ function PrivacyPage() {
 /* ───────────── APP ROUTER ───────────── */
 export default function App() {
   const path = useRoute();
+  const [calcOpen, setCalcOpen] = useState(false);
+
+  // Make openCalc available globally for buttons
+  window.__openCalc = () => setCalcOpen(true);
 
   let page;
   switch (path) {
@@ -1168,9 +1394,10 @@ export default function App() {
 
   return (
     <>
-      <Navbar />
+      <Navbar onCalcOpen={() => setCalcOpen(true)} />
       {page}
       <Footer />
+      <CalculatorLightbox isOpen={calcOpen} onClose={() => setCalcOpen(false)} />
     </>
   );
 }
