@@ -423,6 +423,11 @@ p {
   width: 100%;
 }
 
+.flywheel-wrap video {
+  mix-blend-mode: lighten;
+  border-radius: 0;
+}
+
 .solution-graphic {
   display: flex;
   align-items: center;
