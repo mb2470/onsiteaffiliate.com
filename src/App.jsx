@@ -314,7 +314,7 @@ function CalculatorLightbox({ isOpen, onClose }) {
                 <button className="calc-btn-export" onClick={exportCSV}>↓ Export CSV</button>
                 <button className="calc-btn-export" onClick={exportCSV}>⊞ Export to Sheets</button>
               </div>
-              <button className="calc-btn-cta" onClick={() => { window.open('mailto:info@onsiteaffiliate.com?subject=Onsite Commission Inquiry', '_blank'); }}>
+             <button className="calc-btn-cta" onClick={() => { window.location.href = 'mailto:info@onsiteaffiliate.com?subject=Onsite Commission Inquiry'; }}>
                 Begin Your Onsite Commission Journey →
               </button>
               <p className="calc-fine-print">Your data is never shared. Estimates based on industry benchmarks.</p>
@@ -449,7 +449,7 @@ function Footer() {
           </div>
           <div>
             <h4>Connect</h4>
-            <a href="mailto:info@onsiteaffiliate.com">info@onsiteaffiliate.com</a>
+            <a href="mailto:info@onsiteaffiliate.com" onClick={(e) => { e.preventDefault(); window.location.href = 'mailto:info@onsiteaffiliate.com'; }}>info@onsiteaffiliate.com</a>
           </div>
         </div>
       </div>
