@@ -24,7 +24,7 @@ function useRoute() {
   return path;
 }
 
-function Link({ to, children, className, onClick, scrollTo }) {
+function Link({ to, children, className, onClick }) {
   return (
     
       href={`#${to.split("#")[0]}`}
