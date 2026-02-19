@@ -141,14 +141,14 @@ function Navbar() {
             </button>
             {resOpen && (
               <div className="dropdown-menu">
-                <Link to="/resources" onClick={() => { setOpen(false); setResOpen(false); }}>
-                  Blog
+                <Link to="/resources#blog" onClick={() => { setOpen(false); setResOpen(false); }}>
+                Blog
                 </Link>
-                <Link to="/resources" onClick={() => { setOpen(false); setResOpen(false); }}>
-                  Case Studies
+                <Link to="/resources#case-studies" onClick={() => { setOpen(false); setResOpen(false); }}>
+                Case Studies
                 </Link>
-                <Link to="/resources" onClick={() => { setOpen(false); setResOpen(false); }}>
-                  FAQ
+                <Link to="/resources#faq" onClick={() => { setOpen(false); setResOpen(false); }}>
+                FAQ
                 </Link>
               </div>
             )}
@@ -596,7 +596,7 @@ function ResourcesPage() {
   return (
     <main>
       {/* BLOG */}
-      <section className="page-hero">
+      <section className="page-hero" id="blog">
         <div className="hero-glow" />
         <div className="container">
           <Reveal>
@@ -627,7 +627,7 @@ function ResourcesPage() {
       {activeBlog && <BlogModal blog={activeBlog} onClose={() => setActiveBlog(null)} />}
 
       {/* CASE STUDIES */}
-      <section className="section-black">
+      <section className="section-black" id="case-studies">
         <div className="container">
           <Reveal>
             <h2>
@@ -727,7 +727,7 @@ function ResourcesPage() {
       </section>
 
       {/* FAQ */}
-      <section className="section-black">
+       <section className="section-black" id="faq">
         <div className="container">
           <Reveal>
             <h2>
