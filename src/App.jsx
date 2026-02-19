@@ -152,15 +152,12 @@ function Navbar() {
             </button>
             {resOpen && (
               <div className="dropdown-menu">
-                <Link to="/resources" onClick={() => { setOpen(false); setResOpen(false); }}>
-                  Blog
-                </Link>
-                <Link to="/resources" onClick={() => { setOpen(false); setResOpen(false); }}>
-                  Case Studies
-                </Link>
-                <Link to="/resources" onClick={() => { setOpen(false); setResOpen(false); }}>
-                  FAQ
-                </Link>
+                <a href="#/resources" onClick={(e) => { e.preventDefault(); window.location.hash = "/resources"; setOpen(false); setResOpen(false); setTimeout(() => { document.getElementById("blog")?.scrollIntoView({ behavior: "smooth" }); }, 300); }}>
+                 Blog </a>
+                <a href="#/resources" onClick={(e) => { e.preventDefault(); window.location.hash = "/resources"; setOpen(false); setResOpen(false); setTimeout(() => { document.getElementById("case-studies")?.scrollIntoView({ behavior: "smooth" }); }, 300); }}>
+                Case Studies </a>
+                <a href="#/resources" onClick={(e) => { e.preventDefault(); window.location.hash = "/resources"; setOpen(false); setResOpen(false); setTimeout(() => { document.getElementById("faq")?.scrollIntoView({ behavior: "smooth" }); }, 300); }}>
+                FAQ </a>
               </div>
             )}
           </div>
