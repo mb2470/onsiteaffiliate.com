@@ -437,9 +437,9 @@ function Footer() {
           <div>
             <h4>Company</h4>
             <Link to="/about">About</Link>
-            <Link to="/resources">Blog</Link>
-            <Link to="/resources">Case Studies</Link>
-            <Link to="/resources">FAQ</Link>
+           <a href="#/resources" onClick={(e) => { e.preventDefault(); goToSection("blog"); }}>Blog</a>
+<a href="#/resources" onClick={(e) => { e.preventDefault(); goToSection("case-studies"); }}>Case Studies</a>
+<a href="#/resources" onClick={(e) => { e.preventDefault(); goToSection("faq"); }}>FAQ</a>
           </div>
           <div>
             <h4>Legal</h4>
