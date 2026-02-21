@@ -299,7 +299,7 @@
     border: 1px solid rgba(255,255,255,0.2); background: rgba(0,0,0,0.6);
     color: #fff; font-size: 16px; cursor: pointer;
     display: flex; align-items: center; justify-content: center;
-    backdrop-filter: blur(8px); transition: all 0.2s;
+    backdrop-filter: blur(8px); transition: all 0.3s;
   }
   .play-btn:hover { background: rgba(255,255,255,0.15); border-color: rgba(255,255,255,0.4); }
 </style>
@@ -486,44 +486,47 @@
    */
 
   const TIMELINE = [
+    // 2s blank buffer at start
+
     // Card 1: build word-by-word ~2s + hold 3s = 5s
-    [0,      'showCard',    0],
-    [100,    'revealWords', 0],
-    [4700,   'exitCard',    0],
+    [2000,   'showCard',    0],
+    [2100,   'revealWords', 0],
+    [6700,   'exitCard',    0],
 
     // Card 2: crash in + hold 1s
-    [5000,   'showCrash',   1],
-    [5700,   'exitCard',    1],
+    [7000,   'showCrash',   1],
+    [7700,   'exitCard',    1],
 
     // Card 3: instant + hold 2s
-    [6000,   'showInstant', 2],
-    [7700,   'exitCard',    2],
+    [8000,   'showInstant', 2],
+    [9700,   'exitCard',    2],
 
     // Card 4: build ~1s + hold 2s = 3s
-    [8000,   'showCard',    3],
-    [8100,   'revealWords', 3],
-    [10700,  'exitCard',    3],
+    [10000,  'showCard',    3],
+    [10100,  'revealWords', 3],
+    [12700,  'exitCard',    3],
 
     // Card 5: crash in + hold 1s
-    [11000,  'showCrash',   4],
-    [11700,  'exitCard',    4],
+    [13000,  'showCrash',   4],
+    [13700,  'exitCard',    4],
 
     // Card 6: instant + hold 2s
-    [12000,  'showInstant', 5],
-    [13700,  'exitCard',    5],
+    [14000,  'showInstant', 5],
+    [15700,  'exitCard',    5],
 
     // Card 7: build ~2s + hold 3s = 5s
-    [14000,  'showCard',    6],
-    [14100,  'revealWords', 6],
-    [18700,  'exitCard',    6],
+    [16000,  'showCard',    6],
+    [16100,  'revealWords', 6],
+    [20700,  'exitCard',    6],
 
-    // Card 8: logo + CTA (instant, stays)
-    [19000,  'showCard',    7],
-    [19000,  'showLogo'],
-    [19000,  'showCTA'],
+    // Card 8: logo + CTA (instant, stays — auto-pause here)
+    [21000,  'showCard',    7],
+    [21000,  'showLogo'],
+    [21000,  'showCTA'],
+    [24000,  'autoPause'],
   ];
 
-  const TOTAL_DURATION = 22000; // 17s content + 5s CTA hold before loop
+  const TOTAL_DURATION = 26000; // 2s buffer + 17s content + 5s CTA hold + 2s buffer
   const progress = document.getElementById('progress');
   const ctaBtn = document.getElementById('ctaBtn');
   const allCards = headlines.map(h => document.getElementById(h.id));
@@ -548,6 +551,15 @@
     const logoBig = document.querySelector('.logo-big');
     if (logoBig) { logoBig.classList.remove('visible'); logoBig.style.transition = 'none'; }
     progress.style.width = '0%';
+  }
+
+  function autoPause() {
+    paused = true;
+    pausedAt = 0;
+    startTime = null;
+    playBtn.textContent = '↺';
+    playBtn.style.opacity = '1';
+    playBtn.style.pointerEvents = 'auto';
   }
 
   function showCard(index) {
@@ -600,7 +612,7 @@
     });
   }
 
-  const actions = { showCard, revealWords, exitCard, showCrash, showInstant, showLogo, showCTA };
+  const actions = { showCard, revealWords, exitCard, showCrash, showInstant, showLogo, showCTA, autoPause };
 
   let paused = true;
   let pausedAt = 0;
@@ -625,26 +637,30 @@
       }
     });
 
-    if (elapsed >= TOTAL_DURATION) {
-      resetAll();
-      startTime = null;
-      pausedAt = 0;
-      paused = true;
-      playBtn.textContent = '▶';
-    }
-
     requestAnimationFrame(tick);
   }
 
   playBtn.addEventListener('click', (e) => {
     e.stopPropagation();
-    if (paused) {
+    if (playBtn.textContent === '↺') {
+      // Replay from start
+      resetAll();
+      pausedAt = 0;
       paused = false;
+      startTime = null;
       playBtn.textContent = '⏸';
+      playBtn.style.opacity = '0';
+      playBtn.style.pointerEvents = 'none';
+    } else if (paused) {
+      paused = false;
+      playBtn.style.opacity = '0';
+      playBtn.style.pointerEvents = 'none';
     } else {
       paused = true;
       if (startTime) pausedAt = performance.now() - startTime;
       playBtn.textContent = '▶';
+      playBtn.style.opacity = '1';
+      playBtn.style.pointerEvents = 'auto';
     }
   });
 
