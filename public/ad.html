@@ -362,90 +362,75 @@
 </div>
 
 <script>
-(function() {
+(async function() {
 
-  const headlines = [
-    {
-      id: 'card1',
-      type: 'build',
-      tokens: [
-        ['Are',''], ['your',''], ['shoppers',''],
-        ['scrolling','em'], ['and','em'], ['leaving','em'],
-        ['to',''], ['watch',''], ['reviews',''], ['elsewhere?','']
-      ],
-      wordDelay: 200,
-      wordDuration: 800
-    },
-    {
-      id: 'card2',
-      type: 'crash',
-      tokens: [
-        ["Amazon's",'em'], ['were','em'], ['too!','em']
-      ],
-      wordDelay: 0,
-      wordDuration: 0
-    },
-    {
-      id: 'card3',
-      type: 'instant',
-      tokens: [
-        ['Until',''], ['they',''], ['launched',''], ['an',''],
-        ['Onsite','em'], ['Commission','em'], ['program','em'],
-        ['for',''], ['their',''], ['influencers.','']
-      ],
-      wordDelay: 0,
-      wordDuration: 0
-    },
-    {
-      id: 'card4',
-      type: 'build',
-      tokens: [
-        ['Amazon',''], ['turned',''], ['influencers',''],
-        ['into',''],
-        ['onsite','em'], ['closers.','em']
-      ],
-      wordDelay: 140,
-      wordDuration: 600
-    },
-    {
-      id: 'card5',
-      type: 'crash',
-      tokens: [
-        ['The','em'], ['Result','em']
-      ],
-      wordDelay: 0,
-      wordDuration: 0
-    },
-    {
-      id: 'card6',
-      type: 'instant',
-      tokens: [
-        ['A',''], ['creator',''], ['UGC',''], ['flywheel',''],
-        ['that',''], ['drives',''],
-        ['measurable','em'], ['sales.','em']
-      ],
-      wordDelay: 0,
-      wordDuration: 0
-    },
-    {
-      id: 'card7',
-      type: 'build',
-      tokens: [
-        ['Now',''], ['you',''], ['can',''], ['launch',''], ['an',''],
-        ['Onsite','em'], ['Commission','em'], ['program','em'],
-        ['for',''], ['your',''], ['site',''], ['too!','']
-      ],
-      wordDelay: 150,
-      wordDuration: 700
-    },
-    {
-      id: 'card8',
-      type: 'cta',
-      tokens: [],
-      wordDelay: 0,
-      wordDuration: 0
+  // Parse "*highlighted words*" syntax into tokens
+  function parseText(text) {
+    const tokens = [];
+    const regex = /\*([^*]+)\*/g;
+    let lastIndex = 0;
+    let match;
+    while ((match = regex.exec(text)) !== null) {
+      const before = text.slice(lastIndex, match.index).trim();
+      if (before) before.split(/\s+/).forEach(w => tokens.push([w, '']));
+      match[1].trim().split(/\s+/).forEach(w => tokens.push([w, 'em']));
+      lastIndex = regex.lastIndex;
     }
+    const after = text.slice(lastIndex).trim();
+    if (after) after.split(/\s+/).forEach(w => tokens.push([w, '']));
+    return tokens;
+  }
+
+  // Card config (type + timing — text loaded from JSON)
+  const cardConfig = [
+    { id: 'card1', type: 'build',   key: 'card1', wordDelay: 200, wordDuration: 800 },
+    { id: 'card2', type: 'crash',   key: 'card2', wordDelay: 0,   wordDuration: 0 },
+    { id: 'card3', type: 'instant', key: 'card3', wordDelay: 0,   wordDuration: 0 },
+    { id: 'card4', type: 'build',   key: 'card4', wordDelay: 140, wordDuration: 600 },
+    { id: 'card5', type: 'crash',   key: 'card5', wordDelay: 0,   wordDuration: 0 },
+    { id: 'card6', type: 'instant', key: 'card6', wordDelay: 0,   wordDuration: 0 },
+    { id: 'card7', type: 'build',   key: 'card7', wordDelay: 150, wordDuration: 700 },
+    { id: 'card8', type: 'cta',     key: null,    wordDelay: 0,   wordDuration: 0 },
   ];
+
+  // Default fallback text
+  const defaultText = {
+    card1: { text: "Are your shoppers *scrolling and leaving* to watch reviews elsewhere?" },
+    card2: { text: "*Amazon's were too!*" },
+    card3: { text: "Until they launched an *Onsite Commission program* for their influencers." },
+    card4: { text: "Amazon turned influencers into *onsite closers.*" },
+    card5: { text: "*The Result*" },
+    card6: { text: "A creator UGC flywheel that drives *measurable sales.*" },
+    card7: { text: "Now you can launch an *Onsite Commission program* for your site too!" },
+    ctaText: "Estimate My Sales Lift Now"
+  };
+
+  // Fetch content JSON, fall back to defaults
+  let contentData = defaultText;
+  try {
+    const resp = await fetch('/src/content/ad-headlines.json?v=' + Date.now());
+    if (resp.ok) contentData = await resp.json();
+  } catch(e) { /* use defaults */ }
+
+  // Build headlines array from config + content
+  const headlines = cardConfig.map(cfg => {
+    const entry = cfg.key ? (contentData[cfg.key] || defaultText[cfg.key] || {}) : {};
+    return {
+      id: cfg.id,
+      type: cfg.type,
+      tokens: entry.text ? parseText(entry.text) : [],
+      wordDelay: cfg.wordDelay,
+      wordDuration: cfg.wordDuration
+    };
+  });
+
+  // Update CTA button text
+  const ctaText = contentData.ctaText || defaultText.ctaText;
+  const ctaBtnEl = document.getElementById('ctaBtn');
+  if (ctaBtnEl && ctaBtnEl.childNodes[0]) {
+    ctaBtnEl.childNodes[0].textContent = ctaText + ' ';
+  }
+
 
   /* Build word spans */
   headlines.forEach(h => {
