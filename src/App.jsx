@@ -9,7 +9,7 @@ const routes = {
   "/solutions/measurement": "measurement",
   "/resources": "resources",
   "/brand-terms": "brand-terms",
-  "/data-processing-agreement": "dpa",
+  "/data-processing-addendum": "dpa",
   "/privacy": "privacy",
 };
 
@@ -314,7 +314,7 @@ function CalculatorLightbox({ isOpen, onClose }) {
                 <button className="calc-btn-export" onClick={exportCSV}>↓ Export CSV</button>
                 <button className="calc-btn-export" onClick={exportCSV}>⊞ Export to Sheets</button>
               </div>
-             <button className="calc-btn-cta" onClick={() => { window.location.href = 'mailto:info@onsiteaffiliate.com?subject=Onsite Commission Inquiry'; }}>
+              <button className="calc-btn-cta" onClick={() => { window.open('mailto:info@onsiteaffiliate.com?subject=Onsite Commission Inquiry', '_blank'); }}>
                 Begin Your Onsite Commission Journey →
               </button>
               <p className="calc-fine-print">Your data is never shared. Estimates based on industry benchmarks.</p>
@@ -437,19 +437,19 @@ function Footer() {
           <div>
             <h4>Company</h4>
             <Link to="/about">About</Link>
-           <a href="#/resources" onClick={(e) => { e.preventDefault(); goToSection("blog"); }}>Blog</a>
-<a href="#/resources" onClick={(e) => { e.preventDefault(); goToSection("case-studies"); }}>Case Studies</a>
-<a href="#/resources" onClick={(e) => { e.preventDefault(); goToSection("faq"); }}>FAQ</a>
+            <Link to="/resources">Blog</Link>
+            <Link to="/resources">Case Studies</Link>
+            <Link to="/resources">FAQ</Link>
           </div>
           <div>
             <h4>Legal</h4>
             <Link to="/brand-terms">Brand Terms</Link>
-            <Link to="/data-processing-agreement">Data Processing Agreement</Link>
+            <Link to="/data-processing-addendum">Data Processing Addendum</Link>
             <Link to="/privacy">Privacy Policy</Link>
           </div>
           <div>
             <h4>Connect</h4>
-            <a href="mailto:info@onsiteaffiliate.com" onClick={(e) => { e.preventDefault(); window.location.href = 'mailto:info@onsiteaffiliate.com'; }}>info@onsiteaffiliate.com</a>
+            <a href="mailto:info@onsiteaffiliate.com">info@onsiteaffiliate.com</a>
           </div>
         </div>
       </div>
@@ -508,7 +508,7 @@ function HomePage() {
           </Reveal>
           <Reveal delay={200}>
             <div className="flywheel-wrap">
-              <video src="/images/flywheel.mp4" autoPlay loop muted playsInline />
+              <img src="/images/flywheel.png" alt="Onsite Affiliate Flywheel" />
             </div>
           </Reveal>
         </div>
@@ -738,14 +738,10 @@ function BlogModal({ blog, onClose }) {
   );
 }
 
-/* ───────────── RESOURCES PAGE ───────────── */
-function ResourcesPage() {
-  const [openFaq, setOpenFaq] = useState(null);
-  const [activeBlog, setActiveBlog] = useState(null);
-  const faqs = faqContent.faqs;
-
-  const blogs = [
+/* ───────────── BLOG DATA ───────────── */
+const blogs = [
     {
+      slug: "ugc-below-the-fold",
       title: "Why UGC Below the Fold is Your Secret Conversion Weapon",
       sub: "Closing \"The Scroll Gap\"",
       date: "Feb 3, 2026",
@@ -762,6 +758,7 @@ function ResourcesPage() {
       ),
     },
     {
+      slug: "economics-of-onsite-commissions",
       title: "The Economics of Onsite Commissions",
       sub: "The \"Found Money\" in Onsite Commissions",
       date: "Jan 26, 2026",
@@ -777,6 +774,7 @@ function ResourcesPage() {
       ),
     },
     {
+      slug: "stop-sending-free-product",
       title: "Stop Sending Free Product: Why Onsite Commissions Are the Secret to Scaling Creator UGC",
       sub: "Creators Want a Piece of the Pie",
       date: "Jan 24, 2026",
@@ -792,6 +790,7 @@ function ResourcesPage() {
       ),
     },
     {
+      slug: "secrets-to-making-onsite-commissions-work",
       title: "The Secrets to Making Onsite Commissions Work",
       sub: "The UGC Game Changer",
       date: "Jan 19, 2026",
@@ -807,6 +806,7 @@ function ResourcesPage() {
       ),
     },
     {
+      slug: "30-years-exceptional-service",
       title: "30 Years, Hundreds of Partners: What I've Learned About Exceptional Service",
       sub: "The Human Element in a Tech-Driven World",
       date: "Jan 19, 2026",
@@ -822,6 +822,7 @@ function ResourcesPage() {
       ),
     },
     {
+      slug: "why-affiliate-platforms-fail",
       title: "Why Affiliate Platforms Fail for Onsite Commissions",
       sub: "Misalignment of Intent",
       date: "Jan 13, 2026",
@@ -838,6 +839,50 @@ function ResourcesPage() {
       ),
     },
   ];
+
+/* ───────────── BLOG POST PAGE ───────────── */
+function BlogPostPage({ slug }) {
+  const blog = blogs.find(b => b.slug === slug);
+  if (!blog) return (
+    <main>
+      <section className="page-hero">
+        <div className="hero-glow" />
+        <div className="container">
+          <h1>Post Not Found</h1>
+          <p><Link to="/resources">← Back to Insights</Link></p>
+        </div>
+      </section>
+    </main>
+  );
+  return (
+    <main>
+      <section className="page-hero">
+        <div className="hero-glow" />
+        <div className="container">
+          <Reveal>
+            <Link to="/resources" className="blog-back-link">← Back to Insights</Link>
+            <span className="blog-date">{blog.date}</span>
+            <h1>{blog.title}</h1>
+            <p className="hero-subtitle">{blog.sub}</p>
+          </Reveal>
+        </div>
+      </section>
+      <section className="section-dark">
+        <div className="container">
+          <div className="blog-post-content">
+            {blog.content}
+          </div>
+        </div>
+      </section>
+    </main>
+  );
+}
+
+/* ───────────── RESOURCES PAGE ───────────── */
+function ResourcesPage() {
+  const [openFaq, setOpenFaq] = useState(null);
+  const [activeBlog, setActiveBlog] = useState(null);
+  const faqs = faqContent.faqs;
 
   return (
     <main>
@@ -858,19 +903,17 @@ function ResourcesPage() {
           <div className="blog-grid">
             {blogs.map((b, i) => (
               <Reveal key={i} delay={i * 100} className="blog-grid-item">
-                <div className="blog-card" onClick={() => setActiveBlog(b)} role="button" tabIndex={0}>
+                <a href={`#/blog/${b.slug}`} className="blog-card" onClick={() => window.scrollTo(0,0)}>
                   <span className="blog-date">{b.date}</span>
                   <h3>{b.title}</h3>
                   <p className="blog-sub">{b.sub}</p>
                   <span className="blog-link">Read More →</span>
-                </div>
+                </a>
               </Reveal>
             ))}
           </div>
         </div>
       </section>
-
-      {activeBlog && <BlogModal blog={activeBlog} onClose={() => setActiveBlog(null)} />}
 
       {/* CASE STUDIES */}
       <section className="section-black" id="case-studies">
@@ -1170,10 +1213,10 @@ function BrandTermsPage() {
   );
 }
 
-/* ───────────── DATA PROCESSING AGREEMENT PAGE ───────────── */
+/* ───────────── DATA PROCESSING ADDENDUM PAGE ───────────── */
 function DPAPage() {
   return (
-    <LegalPage title="Data Processing Agreement" lastUpdated="February 15, 2026">
+    <LegalPage title="Data Processing Addendum" lastUpdated="February 15, 2026">
       <p>This Data Processing Agreement ("DPA") forms part of the Agreement between the Parties and is effective as of the effective date of the applicable Order Form or Brand Insertion Order (the "Agreement"). In the event of conflict, this DPA governs with respect to Personal Data processing.</p>
       <p>This DPA applies where Onsite Affiliate processes Personal Data on behalf of Brand in connection with affiliate marketing, onsite video syndication, engagement tracking, purchase attribution, analytics, and commission calculation services.</p>
       <p>Applicable Data Protection Laws include, where relevant, the <strong>General Data Protection Regulation (GDPR)</strong> and the <strong>California Privacy Rights Act (CPRA)</strong>, as well as other applicable U.S. state privacy laws.</p>
@@ -1363,33 +1406,38 @@ export default function App() {
   window.__openCalc = () => setCalcOpen(true);
 
   let page;
-  switch (path) {
-    case "/about":
-      page = <AboutPage />;
-      break;
-    case "/solutions/ecommerce":
-      page = <EcommercePage />;
-      break;
-    case "/solutions/brand-social":
-      page = <BrandSocialPage />;
-      break;
-    case "/solutions/measurement":
-      page = <MeasurementPage />;
-      break;
-    case "/resources":
-      page = <ResourcesPage />;
-      break;
-    case "/brand-terms":
-      page = <BrandTermsPage />;
-      break;
-    case "/data-processing-agreement":
-      page = <DPAPage />;
-      break;
-    case "/privacy":
-      page = <PrivacyPage />;
-      break;
-    default:
-      page = <HomePage />;
+  if (path.startsWith("/blog/")) {
+    const slug = path.replace("/blog/", "");
+    page = <BlogPostPage slug={slug} />;
+  } else {
+    switch (path) {
+      case "/about":
+        page = <AboutPage />;
+        break;
+      case "/solutions/ecommerce":
+        page = <EcommercePage />;
+        break;
+      case "/solutions/brand-social":
+        page = <BrandSocialPage />;
+        break;
+      case "/solutions/measurement":
+        page = <MeasurementPage />;
+        break;
+      case "/resources":
+        page = <ResourcesPage />;
+        break;
+      case "/brand-terms":
+        page = <BrandTermsPage />;
+        break;
+      case "/data-processing-addendum":
+        page = <DPAPage />;
+        break;
+      case "/privacy":
+        page = <PrivacyPage />;
+        break;
+      default:
+        page = <HomePage />;
+    }
   }
 
   return (
