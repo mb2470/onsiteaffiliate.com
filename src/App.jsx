@@ -1,5 +1,20 @@
 import { useState, useEffect, useRef } from "react";
 
+/* ───────────── GA TRACKING ───────────── */
+function trackEvent(eventName, params = {}) {
+  if (window.gtag) {
+    window.gtag('event', eventName, params);
+  }
+}
+function trackPageView(pagePath, pageTitle) {
+  if (window.gtag) {
+    window.gtag('event', 'page_view', {
+      page_path: pagePath,
+      page_title: pageTitle
+    });
+  }
+}
+
 /* ───────────── ROUTE CONTEXT ───────────── */
 const routes = {
   "/": "home",
@@ -163,6 +178,7 @@ function CalculatorLightbox({ isOpen, onClose }) {
   const goToStep = (target) => {
     if (target === 2 && step === 1) {
       if (!form.skus || !form.visitors || !form.cr || !form.aov || !form.placement) return;
+      trackEvent('calculator_step', { step: 2, action: 'customize_complete' });
     }
     if (target === 3 && step === 2) {
       if (!form.email || !form.website) return;
@@ -173,6 +189,7 @@ function CalculatorLightbox({ isOpen, onClose }) {
       }
       calculate();
       submitToSheets();
+      trackEvent('calculator_completed', { email: form.email, website: form.website });
     }
     setStep(target);
   };
@@ -180,6 +197,7 @@ function CalculatorLightbox({ isOpen, onClose }) {
   const formatCurrency = (val) => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(val);
 
   const exportCSV = () => {
+    trackEvent('csv_exported', { email: form.email });
     const csv = [
       'Onsite Commission Opportunity Report', '',
       'Company Email,' + form.email, 'Company Website,' + form.website, '',
@@ -314,7 +332,7 @@ function CalculatorLightbox({ isOpen, onClose }) {
                 <button className="calc-btn-export" onClick={exportCSV}>↓ Export CSV</button>
                 <button className="calc-btn-export" onClick={exportCSV}>⊞ Export to Sheets</button>
               </div>
-              <button className="calc-btn-cta" onClick={() => { window.open('mailto:info@onsiteaffiliate.com?subject=Onsite Commission Inquiry', '_blank'); }}>
+              <button className="calc-btn-cta" onClick={() => { trackEvent('cta_click', { button: 'begin_journey' }); window.open('mailto:info@onsiteaffiliate.com?subject=Onsite Commission Inquiry', '_blank'); }}>
                 Begin Your Onsite Commission Journey →
               </button>
               <p className="calc-fine-print">Your data is never shared. Estimates based on industry benchmarks.</p>
@@ -400,7 +418,7 @@ function Navbar({ onCalcOpen }) {
             )}
           </div>
 
-          <a href="https://app.onsiteaffiliate.com/auth" className="nav-link" target="_blank" rel="noopener noreferrer">
+          <a href="https://app.onsiteaffiliate.com/auth" className="nav-link" target="_blank" rel="noopener noreferrer" onClick={() => trackEvent('cta_click', { button: 'login' })}>
             Login
           </a>
 
@@ -449,7 +467,7 @@ function Footer() {
           </div>
           <div>
             <h4>Connect</h4>
-            <a href="mailto:info@onsiteaffiliate.com">info@onsiteaffiliate.com</a>
+            <a href="mailto:info@onsiteaffiliate.com" onClick={() => trackEvent('contact_click', { source: 'footer' })}>info@onsiteaffiliate.com</a>
           </div>
         </div>
       </div>
@@ -843,6 +861,9 @@ const blogs = [
 /* ───────────── BLOG POST PAGE ───────────── */
 function BlogPostPage({ slug }) {
   const blog = blogs.find(b => b.slug === slug);
+  useEffect(() => {
+    if (blog) trackEvent('blog_viewed', { slug: slug, title: blog.title });
+  }, [slug]);
   if (!blog) return (
     <main>
       <section className="page-hero">
@@ -1403,7 +1424,19 @@ export default function App() {
   const [calcOpen, setCalcOpen] = useState(false);
 
   // Make openCalc available globally for buttons
-  window.__openCalc = () => setCalcOpen(true);
+  window.__openCalc = () => { setCalcOpen(true); trackEvent('calculator_opened', { source: 'cta_button' }); };
+
+  // Track page views on route change
+  useEffect(() => {
+    const titles = {
+      '/': 'Home', '/about': 'About', '/solutions/ecommerce': 'E-Commerce',
+      '/solutions/brand-social': 'Brand & Social', '/solutions/measurement': 'Measurement',
+      '/resources': 'Resources', '/brand-terms': 'Brand Terms',
+      '/data-processing-addendum': 'DPA', '/privacy': 'Privacy Policy'
+    };
+    const title = path.startsWith('/blog/') ? 'Blog: ' + path.replace('/blog/', '') : (titles[path] || 'Home');
+    trackPageView(path, title);
+  }, [path]);
 
   let page;
   if (path.startsWith("/blog/")) {
@@ -1442,7 +1475,7 @@ export default function App() {
 
   return (
     <>
-      <Navbar onCalcOpen={() => setCalcOpen(true)} />
+      <Navbar onCalcOpen={() => { setCalcOpen(true); trackEvent('calculator_opened', { source: 'navbar' }); }} />
       {page}
       <Footer />
       <CalculatorLightbox isOpen={calcOpen} onClose={() => setCalcOpen(false)} />
