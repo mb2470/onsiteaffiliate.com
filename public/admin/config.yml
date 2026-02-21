@@ -1,5 +1,6 @@
 backend:
-  name: git-gateway
+  name: github
+  repo: YOUR_GITHUB_USERNAME/onsite-affiliate  # ← Update this to your repo
   branch: main
 
 media_folder: "public/images"
@@ -96,3 +97,46 @@ collections:
             fields:
               - { name: "q", label: "Question", widget: "string" }
               - { name: "a", label: "Answer", widget: "text" }
+
+      # ─── AD HEADLINES ───
+      - name: "ad-headlines"
+        label: "Ad Headlines"
+        file: "src/content/ad-headlines.json"
+        description: "Edit the text for all ad formats (ad, ad1, ad2, ad3). Wrap words in *asterisks* to highlight them in purple gradient."
+        fields:
+          - name: "card1"
+            label: "Card 1 (Opening question)"
+            widget: "object"
+            fields:
+              - { name: "text", label: "Text (*wrap highlighted words*)", widget: "string" }
+          - name: "card2"
+            label: "Card 2 (Crash-in statement)"
+            widget: "object"
+            fields:
+              - { name: "text", label: "Text (*wrap highlighted words*)", widget: "string" }
+          - name: "card3"
+            label: "Card 3 (Solution intro)"
+            widget: "object"
+            fields:
+              - { name: "text", label: "Text (*wrap highlighted words*)", widget: "string" }
+          - name: "card4"
+            label: "Card 4 (Amazon story)"
+            widget: "object"
+            fields:
+              - { name: "text", label: "Text (*wrap highlighted words*)", widget: "string" }
+          - name: "card5"
+            label: "Card 5 (Crash-in result)"
+            widget: "object"
+            fields:
+              - { name: "text", label: "Text (*wrap highlighted words*)", widget: "string" }
+          - name: "card6"
+            label: "Card 6 (Flywheel)"
+            widget: "object"
+            fields:
+              - { name: "text", label: "Text (*wrap highlighted words*)", widget: "string" }
+          - name: "card7"
+            label: "Card 7 (Call to action)"
+            widget: "object"
+            fields:
+              - { name: "text", label: "Text (*wrap highlighted words*)", widget: "string" }
+          - { name: "ctaText", label: "CTA Button Text", widget: "string" }
