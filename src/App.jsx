@@ -228,6 +228,9 @@ function CalculatorLightbox({ isOpen, onClose }) {
   return (
     <div className="calc-overlay" onClick={(e) => { if (e.target.className === 'calc-overlay') onClose(); }}>
       <div className="calc-lightbox">
+        <a href="#/" className="calc-logo">
+          <img src="/images/logo-white.png" alt="Onsite Affiliate" />
+        </a>
         <button className="calc-close" onClick={onClose}>✕</button>
 
         <div className="calc-header">
@@ -1432,10 +1435,19 @@ export default function App() {
       '/': 'Home', '/about': 'About', '/solutions/ecommerce': 'E-Commerce',
       '/solutions/brand-social': 'Brand & Social', '/solutions/measurement': 'Measurement',
       '/resources': 'Resources', '/brand-terms': 'Brand Terms',
-      '/data-processing-addendum': 'DPA', '/privacy': 'Privacy Policy'
+      '/data-processing-addendum': 'DPA', '/privacy': 'Privacy Policy',
+      '/calculator': 'Calculator'
     };
     const title = path.startsWith('/blog/') ? 'Blog: ' + path.replace('/blog/', '') : (titles[path] || 'Home');
     trackPageView(path, title);
+  }, [path]);
+
+  // Auto-open calculator when navigating to /calculator
+  useEffect(() => {
+    if (path === '/calculator' && !calcOpen) {
+      setCalcOpen(true);
+      trackEvent('calculator_opened', { source: 'direct_url' });
+    }
   }, [path]);
 
   let page;
@@ -1478,7 +1490,7 @@ export default function App() {
       <Navbar onCalcOpen={() => { setCalcOpen(true); trackEvent('calculator_opened', { source: 'navbar' }); }} />
       {page}
       <Footer />
-      <CalculatorLightbox isOpen={calcOpen} onClose={() => setCalcOpen(false)} />
+      <CalculatorLightbox isOpen={calcOpen} onClose={() => { setCalcOpen(false); if (path === '/calculator') window.location.hash = '/'; }} />
     </>
   );
 }
