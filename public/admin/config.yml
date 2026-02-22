@@ -100,7 +100,7 @@ collections:
       # ─── AD HEADLINES ───
       - name: "ad-headlines"
         label: "Ad Headlines"
-        file: "src/content/ad-headlines.json"
+        file: "public/content/ad-headlines.json"
         description: "Edit the text for all ad formats (ad, ad1, ad2, ad3). Wrap words in *asterisks* to highlight them in purple gradient."
         fields:
           - name: "card1"
