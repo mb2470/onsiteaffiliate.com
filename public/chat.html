@@ -1127,7 +1127,7 @@
                     const resultsNoEmail = calculate();
                     if (resultsNoEmail) submitData(resultsNoEmail);
                     await botTypeThenSay(`No problem at all! If you'd like to explore what an Onsite Commission Program can do for your business, you can book a meeting with our team anytime.`, 600);
-                    await botTypeThenSay(`<a href="https://www.onsiteaffiliate.com/appointments" target="_blank" onclick="trackEvent('calculator_book_meeting_clicked')" class="cta-btn">Book a Meeting With Our Team</a>`, 600);
+                    await botTypeThenSay(`<a href="https://www.onsiteaffiliate.com/#/appointments" target="_blank" onclick="trackEvent('calculator_book_meeting_clicked')" class="cta-btn">Book a Meeting With Our Team</a>`, 600);
                     await botTypeThenSay(`Thanks for using the calculator, <strong>${data.name}</strong>! Feel free to come back anytime.`, 600);
                     setInputVisible(false);
                 }
@@ -1153,14 +1153,14 @@
                         addBotMessage(`Your analysis has been sent to <strong>${data.email}</strong>! Keep an eye on your inbox.`);
                         setTimeout(async () => {
                             await botTypeThenSay(`When you're ready to get started, our team would love to walk you through the next steps.`, 700);
-                            await botTypeThenSay(`<a href="https://www.onsiteaffiliate.com/appointments" target="_blank" onclick="trackEvent('calculator_book_meeting_clicked')" class="cta-btn">Book a Meeting With Our Team</a>`, 600);
+                            await botTypeThenSay(`<a href="https://www.onsiteaffiliate.com/#/appointments" target="_blank" onclick="trackEvent('calculator_book_meeting_clicked')" class="cta-btn">Book a Meeting With Our Team</a>`, 600);
                             await botTypeThenSay(`Thanks for chatting, <strong>${data.name}</strong>! We look forward to helping you unlock new revenue through Onsite Commissions.`, 600);
                         }, 400);
                     }).catch(() => {
                         removeTypingIndicator();
                         addBotMessage(`I had a little trouble sending that, but don't worry — your results are right here in the chat! You can also reach our team directly.`);
                         setTimeout(async () => {
-                            await botTypeThenSay(`<a href="https://www.onsiteaffiliate.com/appointments" target="_blank" onclick="trackEvent('calculator_book_meeting_clicked')" class="cta-btn">Book a Meeting With Our Team</a>`, 600);
+                            await botTypeThenSay(`<a href="https://www.onsiteaffiliate.com/#/appointments" target="_blank" onclick="trackEvent('calculator_book_meeting_clicked')" class="cta-btn">Book a Meeting With Our Team</a>`, 600);
                         }, 400);
                     });
                 }
