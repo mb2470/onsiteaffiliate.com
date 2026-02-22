@@ -1436,7 +1436,8 @@ export default function App() {
       '/solutions/brand-social': 'Brand & Social', '/solutions/measurement': 'Measurement',
       '/resources': 'Resources', '/brand-terms': 'Brand Terms',
       '/data-processing-addendum': 'DPA', '/privacy': 'Privacy Policy',
-      '/calculator': 'Calculator'
+      '/calculator': 'Calculator',
+      '/chat': 'Chat'
     };
     const title = path.startsWith('/blog/') ? 'Blog: ' + path.replace('/blog/', '') : (titles[path] || 'Home');
     trackPageView(path, title);
@@ -1447,6 +1448,13 @@ export default function App() {
     if (path === '/calculator' && !calcOpen) {
       setCalcOpen(true);
       trackEvent('calculator_opened', { source: 'direct_url' });
+    }
+  }, [path]);
+
+  // Redirect to chat.html when navigating to /chat
+  useEffect(() => {
+    if (path === '/chat') {
+      window.location.href = '/chat.html';
     }
   }, [path]);
 
