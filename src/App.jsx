@@ -26,6 +26,7 @@ const routes = {
   "/brand-terms": "brand-terms",
   "/data-processing-addendum": "dpa",
   "/privacy": "privacy",
+  "/appointments": "appointments",
 };
 
 function useRoute() {
@@ -1069,6 +1070,65 @@ function ResourcesPage() {
   );
 }
 
+/* ───────────── APPOINTMENTS PAGE ───────────── */
+function AppointmentsPage() {
+  const calendlyUrl = 'https://calendly.com/sales-onsiteaffiliates/30min';
+
+  useEffect(() => {
+    trackEvent('appointments_page_viewed');
+  }, []);
+
+  useEffect(() => {
+    // Load Calendly widget script
+    const existing = document.querySelector('script[src*="calendly.com"]');
+    if (!existing) {
+      const script = document.createElement('script');
+      script.src = 'https://assets.calendly.com/assets/external/widget.js';
+      script.async = true;
+      document.head.appendChild(script);
+    }
+
+    // Load Calendly CSS
+    const existingCss = document.querySelector('link[href*="calendly.com"]');
+    if (!existingCss) {
+      const link = document.createElement('link');
+      link.href = 'https://assets.calendly.com/assets/external/widget.css';
+      link.rel = 'stylesheet';
+      document.head.appendChild(link);
+    }
+  }, []);
+
+  return (
+    <main>
+      <section className="page-hero">
+        <div className="hero-glow" />
+        <div className="container">
+          <Reveal>
+            <h1>
+              Book an <span className="gradient-text">Appointment</span>
+            </h1>
+          </Reveal>
+          <Reveal delay={150}>
+            <p className="hero-subtitle">
+              Schedule a 30-minute call with our team to learn how Onsite Commissions can drive incremental revenue for your business.
+            </p>
+          </Reveal>
+        </div>
+      </section>
+
+      <section className="section-dark">
+        <div className="container">
+          <div
+            className="calendly-inline-widget"
+            data-url={`${calendlyUrl}?hide_gdpr_banner=1&background_color=0f0f1a&text_color=e2e2f0&primary_color=8B5CF6`}
+            style={{ minWidth: '320px', height: '700px' }}
+          />
+        </div>
+      </section>
+    </main>
+  );
+}
+
 /* ───────────── LEGAL PAGE WRAPPER ───────────── */
 function LegalPage({ title, lastUpdated, children }) {
   return (
@@ -1434,7 +1494,8 @@ export default function App() {
     const titles = {
       '/': 'Home', '/about': 'About', '/solutions/ecommerce': 'E-Commerce',
       '/solutions/brand-social': 'Brand & Social', '/solutions/measurement': 'Measurement',
-      '/resources': 'Resources', '/brand-terms': 'Brand Terms',
+      '/resources': 'Resources', '/appointments': 'Appointments',
+      '/brand-terms': 'Brand Terms',
       '/data-processing-addendum': 'DPA', '/privacy': 'Privacy Policy',
       '/calculator': 'Calculator',
       '/chat': 'Chat'
@@ -1478,6 +1539,9 @@ export default function App() {
         break;
       case "/resources":
         page = <ResourcesPage />;
+        break;
+      case "/appointments":
+        page = <AppointmentsPage />;
         break;
       case "/brand-terms":
         page = <BrandTermsPage />;

@@ -1707,3 +1707,15 @@ button.btn-primary {
   .calc-stats-row { grid-template-columns: 1fr; }
   .calc-export-row { flex-direction: column; }
 }
+
+/* ───────────── APPOINTMENTS / CALENDLY ───────────── */
+.calendly-inline-widget {
+  border-radius: 16px;
+  overflow: hidden;
+}
+@media (max-width: 768px) {
+  .calendly-inline-widget {
+    min-height: 900px !important;
+    height: 900px !important;
+  }
+}
