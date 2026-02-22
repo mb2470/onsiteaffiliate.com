@@ -1,0 +1,646 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>Onsite Affiliate — Investor</title>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --purple: #9015ed;
+    --blue: #245ef9;
+    --deep: #4a3fed;
+    --lavender: #c6beee;
+    --dark: #01081e;
+    --darker: #000510;
+    --card-bg: rgba(255,255,255,0.04);
+    --card-border: rgba(255,255,255,0.08);
+    --text: #e8e6f0;
+    --text-dim: rgba(255,255,255,0.55);
+    --grad: linear-gradient(135deg, var(--purple), var(--blue));
+  }
+
+  body {
+    font-family: 'Sora', sans-serif;
+    background: var(--darker);
+    color: var(--text);
+    min-height: 100vh;
+    overflow: hidden;
+  }
+
+  /* ── LOGIN SCREEN ────────────────────────────────────── */
+  #login-screen {
+    position: fixed; inset: 0; z-index: 1000;
+    background: var(--darker);
+    display: flex; align-items: center; justify-content: center;
+    flex-direction: column; gap: 28px;
+  }
+  #login-screen.hidden { display: none; }
+  .login-logo { width: 64px; height: 64px; margin-bottom: 8px; }
+  .login-title { font-size: 20px; font-weight: 600; letter-spacing: 2px; text-transform: uppercase; opacity: 0.7; }
+  .login-box { display: flex; flex-direction: column; gap: 14px; align-items: center; }
+  .login-box input {
+    width: 280px; padding: 14px 18px;
+    border: 1px solid var(--card-border); border-radius: 10px;
+    background: rgba(255,255,255,0.06); color: #fff;
+    font-family: 'Sora', sans-serif; font-size: 14px;
+    outline: none; transition: border-color 0.2s;
+  }
+  .login-box input:focus { border-color: var(--purple); }
+  .login-box input::placeholder { color: var(--text-dim); }
+  .login-box button {
+    width: 280px; padding: 14px;
+    background: var(--grad); border: none; border-radius: 10px;
+    color: #fff; font-family: 'Sora', sans-serif; font-size: 14px;
+    font-weight: 600; cursor: pointer; transition: opacity 0.2s;
+  }
+  .login-box button:hover { opacity: 0.85; }
+  .login-error { color: #ff5b5b; font-size: 12px; min-height: 16px; }
+
+  /* ── DECK CONTAINER ──────────────────────────────────── */
+  #deck { display: none; position: fixed; inset: 0; }
+  #deck.active { display: flex; flex-direction: column; }
+
+  /* ── SLIDE AREA ──────────────────────────────────────── */
+  .slide-viewport {
+    flex: 1; position: relative; overflow: hidden;
+  }
+  .slide {
+    position: absolute; inset: 0;
+    display: flex; align-items: center; justify-content: center;
+    padding: 60px 80px;
+    opacity: 0; transform: translateX(40px);
+    transition: opacity 0.45s ease, transform 0.45s ease;
+    pointer-events: none;
+  }
+  .slide.active {
+    opacity: 1; transform: translateX(0); pointer-events: auto;
+  }
+  .slide.exit-left {
+    opacity: 0; transform: translateX(-40px);
+  }
+
+  /* ── SLIDE CONTENT LAYOUTS ───────────────────────────── */
+  .slide-inner { max-width: 1100px; width: 100%; }
+
+  .slide-title {
+    font-size: clamp(28px, 4vw, 48px); font-weight: 800;
+    margin-bottom: 32px; line-height: 1.15;
+  }
+  .slide-title .grad {
+    background: var(--grad); -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent; background-clip: text;
+  }
+  .slide-subtitle {
+    font-size: clamp(16px, 2vw, 22px); font-weight: 300;
+    color: var(--text-dim); line-height: 1.6; margin-bottom: 36px;
+    max-width: 700px;
+  }
+
+  .bullet-list { list-style: none; display: flex; flex-direction: column; gap: 20px; }
+  .bullet-list li {
+    padding: 20px 24px; border-radius: 12px;
+    background: var(--card-bg); border: 1px solid var(--card-border);
+    font-size: clamp(14px, 1.4vw, 17px); line-height: 1.6;
+  }
+  .bullet-list li strong { color: #fff; font-weight: 600; }
+
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 48px; align-items: center; }
+  .two-col img { width: 100%; border-radius: 12px; border: 1px solid var(--card-border); }
+
+  .stat-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; margin-top: 24px; }
+  .stat-card {
+    padding: 24px; border-radius: 12px;
+    background: var(--card-bg); border: 1px solid var(--card-border);
+  }
+  .stat-card .num { font-size: 28px; font-weight: 800; background: var(--grad); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+  .stat-card .label { font-size: 13px; color: var(--text-dim); margin-top: 6px; }
+
+  /* Comparison table */
+  .comp-table { width: 100%; border-collapse: collapse; font-size: clamp(12px, 1.2vw, 15px); }
+  .comp-table th {
+    text-align: left; padding: 14px 16px; font-weight: 700;
+    border-bottom: 2px solid rgba(255,255,255,0.15);
+    font-size: clamp(11px, 1vw, 13px); text-transform: uppercase; letter-spacing: 1px;
+    color: var(--text-dim);
+  }
+  .comp-table th:nth-child(3) { color: var(--lavender); }
+  .comp-table td {
+    padding: 14px 16px; border-bottom: 1px solid rgba(255,255,255,0.06);
+    line-height: 1.5; vertical-align: top;
+  }
+  .comp-table td:first-child { font-weight: 600; color: var(--lavender); white-space: nowrap; }
+  .comp-table td:nth-child(2) { color: var(--text-dim); }
+  .comp-table td:nth-child(3) { color: #fff; }
+
+  /* Externalization table */
+  .ext-table { width: 100%; border-collapse: collapse; font-size: clamp(13px, 1.3vw, 16px); margin-top: 24px; }
+  .ext-table th { text-align: left; padding: 12px 16px; font-weight: 600; border-bottom: 2px solid rgba(255,255,255,0.15); color: var(--text-dim); font-size: 12px; text-transform: uppercase; letter-spacing: 1px; }
+  .ext-table td { padding: 14px 16px; border-bottom: 1px solid rgba(255,255,255,0.06); }
+  .ext-table tr:last-child td { color: #fff; font-weight: 700; background: rgba(144,21,237,0.08); }
+  .ext-table .val { color: var(--lavender); }
+
+  /* ROCS box */
+  .rocs-box {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 32px; margin-top: 20px;
+  }
+  .rocs-metrics { display: flex; flex-direction: column; gap: 12px; }
+  .rocs-metrics .row {
+    display: flex; justify-content: space-between; padding: 8px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+    font-size: clamp(12px, 1.2vw, 15px);
+  }
+  .rocs-metrics .row .val { font-weight: 600; color: #fff; }
+  .rocs-highlight {
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    padding: 32px; border-radius: 16px;
+    background: var(--card-bg); border: 1px solid var(--card-border);
+  }
+  .rocs-highlight .big {
+    font-size: 72px; font-weight: 800;
+    background: var(--grad); -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  }
+  .rocs-highlight .lbl { font-size: 14px; color: var(--text-dim); margin-top: 8px; }
+
+  /* Team */
+  .team-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; }
+  .team-card {
+    padding: 28px; border-radius: 14px;
+    background: var(--card-bg); border: 1px solid var(--card-border);
+  }
+  .team-card .name { font-size: 22px; font-weight: 700; margin-bottom: 4px; }
+  .team-card .role { font-size: 13px; color: var(--lavender); margin-bottom: 16px; }
+  .team-card .bio { font-size: 13px; color: var(--text-dim); line-height: 1.65; }
+
+  /* ── BOTTOM NAV ──────────────────────────────────────── */
+  .deck-nav {
+    padding: 16px 40px; display: flex; align-items: center;
+    justify-content: space-between;
+    border-top: 1px solid rgba(255,255,255,0.06);
+    background: rgba(0,5,16,0.8); backdrop-filter: blur(10px);
+  }
+  .deck-nav .slide-counter { font-size: 13px; color: var(--text-dim); font-weight: 500; min-width: 80px; }
+  .deck-nav .dots { display: flex; gap: 6px; }
+  .deck-nav .dot {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: rgba(255,255,255,0.15); cursor: pointer;
+    transition: all 0.2s;
+  }
+  .deck-nav .dot.active { background: var(--purple); width: 24px; border-radius: 4px; }
+  .deck-nav .nav-btns { display: flex; gap: 10px; }
+  .deck-nav .nav-btn {
+    width: 40px; height: 40px; border-radius: 10px;
+    border: 1px solid var(--card-border); background: var(--card-bg);
+    color: #fff; font-size: 18px; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: all 0.2s;
+  }
+  .deck-nav .nav-btn:hover { background: rgba(255,255,255,0.1); border-color: rgba(255,255,255,0.2); }
+  .deck-nav .nav-btn:disabled { opacity: 0.3; cursor: default; }
+
+  /* ── BACKGROUND ORBS ─────────────────────────────────── */
+  .orb {
+    position: fixed; border-radius: 50%; pointer-events: none; filter: blur(100px); z-index: -1;
+  }
+  .orb-1 { width: 500px; height: 500px; top: -10%; left: -5%; background: rgba(144,21,237,0.12); }
+  .orb-2 { width: 400px; height: 400px; bottom: -10%; right: -5%; background: rgba(36,94,249,0.10); }
+
+  /* ── RESPONSIVE ──────────────────────────────────────── */
+  @media (max-width: 768px) {
+    .slide { padding: 40px 24px; }
+    .two-col { grid-template-columns: 1fr; gap: 24px; }
+    .stat-grid { grid-template-columns: 1fr; }
+    .rocs-box { grid-template-columns: 1fr; }
+    .team-grid { grid-template-columns: 1fr; }
+    .comp-table { font-size: 11px; }
+    .comp-table td, .comp-table th { padding: 10px 8px; }
+    .deck-nav .dots { display: none; }
+  }
+
+  /* Side note / annotation style */
+  .side-note {
+    padding: 20px 24px; border-radius: 12px; margin-top: 24px;
+    background: rgba(144,21,237,0.06); border-left: 3px solid var(--purple);
+    font-size: clamp(13px, 1.3vw, 16px); line-height: 1.6; color: var(--text-dim);
+  }
+  .side-note strong { color: #fff; }
+
+  .img-caption { font-size: 12px; color: var(--lavender); text-align: center; margin-top: 10px; font-style: italic; }
+</style>
+</head>
+<body>
+<div class="orb orb-1"></div>
+<div class="orb orb-2"></div>
+
+<!-- ═══ LOGIN SCREEN ═══ -->
+<div id="login-screen">
+  <svg class="login-logo" viewBox="0 0 100 100" fill="none">
+    <circle cx="50" cy="50" r="48" stroke="url(#lg)" stroke-width="2" fill="rgba(144,21,237,0.08)"/>
+    <polygon points="40,30 40,70 72,50" fill="url(#lg)"/>
+    <defs><linearGradient id="lg" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#9015ed"/><stop offset="1" stop-color="#245ef9"/></linearGradient></defs>
+  </svg>
+  <div class="login-title">Investor Access</div>
+  <div class="login-box">
+    <input type="password" id="pw-input" placeholder="Enter access code" autocomplete="off">
+    <button onclick="tryLogin()">Enter</button>
+    <div class="login-error" id="login-error"></div>
+  </div>
+</div>
+
+<!-- ═══ DECK ═══ -->
+<div id="deck">
+  <div class="slide-viewport">
+
+    <!-- SLIDE 1: Title -->
+    <div class="slide" data-slide="0">
+      <div class="slide-inner" style="text-align:center;">
+        <div style="margin-bottom:32px;">
+          <img src="/images/investor/logo-full.png" alt="Onsite Affiliate" style="width:clamp(180px,28vw,320px);height:auto;">
+        </div>
+        <div class="slide-title" style="max-width:800px;margin:0 auto;font-size:clamp(24px,3.5vw,42px);">
+          Growing the creator economy by unlocking the full social commerce potential of every <span class="grad">creator generated video.</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 2: The Problem -->
+    <div class="slide" data-slide="1">
+      <div class="slide-inner">
+        <div class="slide-title">The <span class="grad">Problem</span></div>
+        <ul class="bullet-list">
+          <li><strong>The Gap:</strong> Ecommerce brands outside of Amazon have creators and video players, but lack the "engine" to scale creator UGC for catalog-wide conversion optimization.</li>
+          <li><strong>The Friction:</strong> Traditional UGC acquisition struggles to scale due to upfront valuation, manual efforts, and over reliance on product gifting/seeding incentives.</li>
+          <li><strong>The Developer Bottleneck:</strong> Large brands face year-long builds for custom product seeding, advanced attribution tracking, and creator payout systems, straining their developer resources.</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- SLIDE 3: The Solution (Flywheel) -->
+    <div class="slide" data-slide="2">
+      <div class="slide-inner">
+        <div class="two-col">
+          <div>
+            <div class="slide-title" style="font-size:clamp(22px,3.2vw,38px);">
+              The first AI-powered onsite creator incrementality engine, bridging the gap between <span class="grad">social commerce</span> and the checkout button.
+            </div>
+          </div>
+          <div>
+            <img src="/images/investor/flywheel.png" alt="Onsite Affiliate Flywheel" style="border:none;background:transparent;">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 4: The Solution -->
+    <div class="slide" data-slide="3">
+      <div class="slide-inner">
+        <div class="slide-title">The <span class="grad">Solution</span></div>
+        <ul class="bullet-list">
+          <li><strong>Provide the "Missing Link":</strong> A platform that pays creators based on the true incremental lift that their UGC videos deliver at checkout.</li>
+          <li><strong>Make it Easy to Integrate:</strong> Allow brands to launch in weeks, not months, by connecting with their existing creator and e-commerce stacks without requiring them to write new code.</li>
+          <li><strong>Power it with AI Agents:</strong> Automate the entire creator UGC lifecycle from acquisition through approval, syndication, engagement tracking, sales attribution, and creator commission payouts.</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- SLIDE 5: Why Now -->
+    <div class="slide" data-slide="4">
+      <div class="slide-inner">
+        <div class="slide-title">Why <span class="grad">Now</span></div>
+        <ul class="bullet-list">
+          <li><strong>Content Utilization Gap:</strong> Brands are sitting on massive libraries of passive UGC video because less than 10% of their social content drives meaningful social commerce results due to referral "link-click" friction.</li>
+          <li><strong>Affiliate Platforms:</strong> Legacy affiliate tech is totally dependent on a referral link-click, and does not work natively for tracking creator onsite video engagement and sales attribution.</li>
+          <li><strong>UGC Platforms:</strong> Pushing UGC creators out of platform and agency closed networks and into direct-to-brand performance deals is a demise of their business model.</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- SLIDE 6: Market Opportunity -->
+    <div class="slide" data-slide="5">
+      <div class="slide-inner">
+        <div class="slide-title">The Market <span class="grad">Opportunity</span></div>
+        <div class="stat-grid">
+          <div class="stat-card"><div class="num">$6T</div><div class="label">Global ecommerce outside Amazon</div></div>
+          <div class="stat-card"><div class="num">3,500+</div><div class="label">D2C brands with >$100M revenue</div></div>
+          <div class="stat-card"><div class="num">1,400+</div><div class="label">In North America alone</div></div>
+          <div class="stat-card"><div class="num">5M+</div><div class="label">Micro/Nano creators shopping & creating</div></div>
+        </div>
+        <div class="side-note">
+          <strong>The New Buyer:</strong> The Affiliate and Influencer marketing roles are merging at brands, creating "The Unified Performance Marketer" role — reflecting the organizational shift toward Creator-Led Growth.
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 7: Why We Win -->
+    <div class="slide" data-slide="6">
+      <div class="slide-inner">
+        <div class="slide-title" style="margin-bottom:20px;">Why We <span class="grad">Win</span></div>
+        <table class="comp-table">
+          <thead><tr><th></th><th>Traditional UGC Platform</th><th>Onsite Affiliate</th></tr></thead>
+          <tbody>
+            <tr><td>Catalog Coverage</td><td>Limited. Usually restricted to "Hero" SKUs due to high cost-per-asset.</td><td>Comprehensive. Crowdsourced "bounties" drive UGC for the entire long-tail catalog.</td></tr>
+            <tr><td>Primary Goal</td><td>Asset Production (The Video)</td><td>Sales Lift (The Conversion)</td></tr>
+            <tr><td>Required Effort</td><td>High. Vetting, approvals, and shipping coordination.</td><td>Low. Creators proactively source products, upload content, and AI vets and ships.</td></tr>
+            <tr><td>Cost Structure</td><td>Upfront Fee / Retainer (Sunk Cost)</td><td>Performance-Based (Only Pay for Outcomes)</td></tr>
+            <tr><td>Primary Placement</td><td>Social Network Feed (Fleeting)</td><td>Near The Onsite Point of Sale (Permanent)</td></tr>
+            <tr><td>Scalability</td><td>Linear (More videos = More cost)</td><td>Exponential (Network Effect)</td></tr>
+          </tbody>
+        </table>
+        <div class="side-note" style="margin-top:20px;">We become the first <strong>onsite social commerce network</strong> with a data moat from scaling a cross-brand creator performance data set.</div>
+      </div>
+    </div>
+
+    <!-- SLIDE 8: Amazon Benchmark -->
+    <div class="slide" data-slide="7">
+      <div class="slide-inner">
+        <div class="slide-title">The Amazon <span class="grad">Benchmark</span></div>
+        <div class="two-col" style="gap:32px;">
+          <div style="text-align:center;">
+            <div style="font-weight:600;margin-bottom:12px;font-size:15px;">The Amazon Benchmark</div>
+            <img src="/images/investor/amazon.png" alt="Amazon product videos" style="max-height:360px;width:auto;">
+            <div class="img-caption">Five Creator UGC Videos Paid for Entirely Based On Incremental Sales They Drive</div>
+          </div>
+          <div style="text-align:center;">
+            <div style="font-weight:600;margin-bottom:12px;font-size:15px;">Everyone Else's Benchmark</div>
+            <img src="/images/investor/beyondyoga.png" alt="Beyond Yoga single video" style="max-height:360px;width:auto;">
+            <div class="img-caption">One Creator UGC Video Paid For Upfront</div>
+          </div>
+        </div>
+        <div style="text-align:center;margin-top:16px;font-size:13px;color:var(--lavender);font-weight:600;">Same Product</div>
+      </div>
+    </div>
+
+    <!-- SLIDE 9: Amazon Proofpoint -->
+    <div class="slide" data-slide="8">
+      <div class="slide-inner">
+        <div class="slide-title">Amazon <span class="grad">Proofpoint</span></div>
+        <div class="slide-subtitle">Amazon has proven that when you align creator incentives with onsite sales performance you can massively scale creator UGC for social commerce.</div>
+        <div class="stat-grid" style="grid-template-columns: repeat(3,1fr);">
+          <div class="stat-card"><div class="num">1M+</div><div class="label">Creators in the Amazon Influencer Program</div></div>
+          <div class="stat-card"><div class="num">1.3</div><div class="label">Videos per day from top creators</div></div>
+          <div class="stat-card"><div class="num">1,200+</div><div class="label">Videos in a single creator's library</div></div>
+        </div>
+        <div class="side-note" style="margin-top:24px;">Amazon has successfully crowdsourced a library of shoppable videos for <strong>millions of SKUs</strong> — a feat that would be impossible if they had to pay creators upfront.</div>
+      </div>
+    </div>
+
+    <!-- SLIDE 10: The Next Amazon Externalization -->
+    <div class="slide" data-slide="9">
+      <div class="slide-inner">
+        <div class="slide-title">The Next Great Amazon <span class="grad">Externalization</span></div>
+        <div class="slide-subtitle">History shows that when you take an Amazon-exclusive superpower and give it to everyone else, you create a category-defining company.</div>
+        <table class="ext-table">
+          <thead><tr><th>Amazon Capability</th><th>Externalized By</th><th>Enterprise Market Value</th></tr></thead>
+          <tbody>
+            <tr><td>Product Reviews</td><td>Bazaarvoice / PowerReviews</td><td class="val">$1B+ Acquisition</td></tr>
+            <tr><td>Fulfillment/Logistics</td><td>ShipBob / Flexport</td><td class="val">Multi-Billion Valuation</td></tr>
+            <tr><td>Infrastructure</td><td>AWS → DigitalOcean / Heroku</td><td class="val">$100B+ Category</td></tr>
+            <tr><td>Personalization</td><td>RichRelevance / Kibo</td><td class="val">Major PE Exits</td></tr>
+            <tr><td>Onsite Social Commerce</td><td>Onsite Affiliate</td><td class="val">The Opportunity!</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- SLIDE 11: How We Guarantee Incrementality -->
+    <div class="slide" data-slide="10">
+      <div class="slide-inner">
+        <div class="slide-title">How We Guarantee <span class="grad">Incrementality</span></div>
+        <div class="slide-subtitle">Most platforms charge for sales that would have happened anyway. We don't.</div>
+        <ul class="bullet-list">
+          <li><strong>"Try-Before-You-Buy" Program:</strong> Customers onboard to measure ROI before they ever recruit a creator using an onsite commission offer. This isolates the exact sales lift from a statistically valid sample of onsite creator UGC placements.</li>
+          <li><strong>Customizable Attribution:</strong> Customers use sales lift data from this test to implement the optimal commission structure through customizable settings for attribution model, attribution window and SKU level margins.</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- SLIDE 12: Outcome for Brands (ROCS) -->
+    <div class="slide" data-slide="11">
+      <div class="slide-inner">
+        <div class="slide-title">Outcome for <span class="grad">Brands</span></div>
+        <div class="slide-subtitle" style="max-width:900px;">Return on Commission Spend (ROCS): The incremental sales returned on every dollar invested for onsite commissions paid to UGC creators.</div>
+        <div class="rocs-box">
+          <div class="rocs-metrics" style="font-size:14px;">
+            <div style="font-weight:600;margin-bottom:8px;color:var(--lavender);font-size:12px;text-transform:uppercase;letter-spacing:1px;">Brand with $141 AOV & 5% Commission</div>
+            <div class="row"><span>Baseline Sales Total</span><span class="val">$100,000,000</span></div>
+            <div class="row"><span>Unique Visitors</span><span class="val">33,772,374</span></div>
+            <div class="row"><span>Conversion Rate</span><span class="val">2.1%</span></div>
+            <div class="row"><span>UGC Engagement Rate</span><span class="val">9.1%</span></div>
+            <div class="row"><span>Total UGC Engagements</span><span class="val">3,073,286</span></div>
+            <div class="row"><span>UGC Conversion Rate</span><span class="val">4.4%</span></div>
+            <div class="row"><span>UGC Attributed Sales</span><span class="val">$13,961,078</span></div>
+            <div class="row"><span>New Sales Total</span><span class="val">$104,861,078</span></div>
+            <div class="row" style="border-bottom:2px solid rgba(144,21,237,0.3);"><span style="font-weight:700;color:#fff;">Incremental Sales</span><span class="val" style="font-weight:700;">$4,861,078</span></div>
+          </div>
+          <div class="rocs-highlight">
+            <div class="big">7.0x</div>
+            <div class="lbl">Return on Commission Spend</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 13: How We Make Money -->
+    <div class="slide" data-slide="12">
+      <div class="slide-inner">
+        <div class="slide-title">How We <span class="grad">Make Money</span></div>
+        <div class="slide-subtitle">We don't charge for software. We charge only for the revenue we create.</div>
+        <div class="rocs-box">
+          <div>
+            <ul class="bullet-list" style="gap:14px;">
+              <li><strong>Scaled Creator UGC:</strong> Our platform fee is a small amount for creating and administering the customer's creator UGC commission ecosystem.</li>
+              <li><strong>Incremental Sales:</strong> Our commission tracking and payment fee is a percentage of approved onsite commissions — representative of the revenue we create.</li>
+            </ul>
+          </div>
+          <div>
+            <div class="rocs-metrics" style="font-size:14px;">
+              <div style="font-weight:600;margin-bottom:8px;color:var(--lavender);font-size:12px;text-transform:uppercase;letter-spacing:1px;">Revenue Example</div>
+              <div class="row"><span>Total Unique Product SKUs</span><span class="val">4,025</span></div>
+              <div class="row"><span>Creator UGC Videos</span><span class="val">9,056</span></div>
+              <div class="row"><span>Total UGC Engagements</span><span class="val">3,073,286</span></div>
+              <div class="row"><span>UGC Attributed Sales</span><span class="val">$13,961,078</span></div>
+              <div class="row"><span>Approved Commissions</span><span class="val">$698,054</span></div>
+              <div class="row"><span>Commission Tracking Fee</span><span class="val">$69,805</span></div>
+              <div class="row"><span>Platform Fee</span><span class="val">$12,000</span></div>
+              <div class="row" style="border-bottom:2px solid rgba(144,21,237,0.3);"><span style="font-weight:700;color:#fff;">Total OA Fees</span><span class="val" style="font-weight:700;">$81,805</span></div>
+            </div>
+            <div style="text-align:center;margin-top:16px;"><span style="font-size:13px;color:var(--text-dim);">ROCS Inclusive of Fees:</span> <span style="font-size:20px;font-weight:800;background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">6.2x</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 14: How Our Platform Works -->
+    <div class="slide" data-slide="13">
+      <div class="slide-inner">
+        <div class="slide-title">How Our <span class="grad">Platform Works</span></div>
+        <div class="two-col" style="gap:40px;">
+          <div>
+            <div class="slide-subtitle" style="margin-bottom:20px;">Customers install our SDK to send video playback exposures and checkout transactions to our Onsite Commission Engine.</div>
+            <ol style="list-style:none;counter-reset:step;display:flex;flex-direction:column;gap:14px;">
+              <li style="counter-increment:step;padding:14px 16px;border-radius:10px;background:var(--card-bg);border:1px solid var(--card-border);font-size:13px;line-height:1.6;"><span style="font-weight:700;color:var(--lavender);margin-right:8px;">1.</span> Our AI Agent invites their creator community to join their onsite commission dashboard.</li>
+              <li style="counter-increment:step;padding:14px 16px;border-radius:10px;background:var(--card-bg);border:1px solid var(--card-border);font-size:13px;line-height:1.6;"><span style="font-weight:700;color:var(--lavender);margin-right:8px;">2.</span> Creators upload UGC videos and track approval status, playbacks and commissions.</li>
+              <li style="counter-increment:step;padding:14px 16px;border-radius:10px;background:var(--card-bg);border:1px solid var(--card-border);font-size:13px;line-height:1.6;"><span style="font-weight:700;color:var(--lavender);margin-right:8px;">3.</span> Our AI Agent approves & traffics the video to the brand's onsite video player.</li>
+              <li style="counter-increment:step;padding:14px 16px;border-radius:10px;background:var(--card-bg);border:1px solid var(--card-border);font-size:13px;line-height:1.6;"><span style="font-weight:700;color:var(--lavender);margin-right:8px;">4.</span> We calculate onsite commissions based on engagements, transactions, and custom attribution settings.</li>
+              <li style="counter-increment:step;padding:14px 16px;border-radius:10px;background:var(--card-bg);border:1px solid var(--card-border);font-size:13px;line-height:1.6;"><span style="font-weight:700;color:var(--lavender);margin-right:8px;">5.</span> Commissions are validated and automatically paid out to creators.</li>
+            </ol>
+          </div>
+          <div>
+            <img src="/images/investor/oce.png" alt="Onsite Commission Engine Architecture" style="border:none;background:#fff;border-radius:12px;padding:16px;">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 15: Trust & Safety -->
+    <div class="slide" data-slide="14">
+      <div class="slide-inner">
+        <div class="slide-title">Trust & <span class="grad">Safety</span></div>
+        <div class="slide-subtitle">Our Onsite Commission Engine includes built-in fraud controls and brand safety features.</div>
+        <ul class="bullet-list">
+          <li><strong>Creator & Content Safety:</strong> Vetting powered by AI and real humans</li>
+          <li><strong>Bot Suppression:</strong> Bot playback suppression to prevent fraudulent views</li>
+          <li><strong>Purchase Monitoring:</strong> Ensuring creators are not buying their own products to earn commissions</li>
+          <li><strong>Content Protection:</strong> Built-in AI to prevent content duplication, stolen UGC, and IP infringement</li>
+          <li><strong>Commission Validation:</strong> Process to account for order returns, refunds and cancellations</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- SLIDE 16: Who We Are -->
+    <div class="slide" data-slide="15">
+      <div class="slide-inner">
+        <div class="slide-title">Who We <span class="grad">Are</span></div>
+        <div class="team-grid">
+          <div class="team-card">
+            <div class="name">Mike Balducci</div>
+            <div class="role">Co-Founder</div>
+            <div class="bio">Most recently GM of Creator Commerce at CreatorIQ, overseeing Affiliate, Ecommerce, and Payments for five years, supporting Amazon, Lowe's, and lululemon. Seed investor and advisor to CreatorIQ's founder/CEO before joining leadership in 2021. Co-founded AimTV for online video advertising in 1999, leading to acquisition by United Online. Career spans digital innovation leadership at Vericast and Experian.</div>
+          </div>
+          <div class="team-card">
+            <div class="name">Alan Edgett</div>
+            <div class="role">Co-Founder</div>
+            <div class="bio">Former Founder/CEO of The Gig Agency, a performance marketing consultancy serving clients with $300M+ annual budgets. Previously CMO/CPO at Cove Financial Group — instrumental in raising $250M in capital and scaling to successful acquisition in 2015. Holds patents for real-time data ad servers. Career in digital began as employee #5 at Internetwire in 1998, helping secure a $20M Series B from Sequoia Capital.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /slide-viewport -->
+
+  <!-- Bottom Nav -->
+  <div class="deck-nav">
+    <div class="slide-counter"><span id="current-slide">1</span> / <span id="total-slides">16</span></div>
+    <div class="dots" id="dots"></div>
+    <div class="nav-btns">
+      <button class="nav-btn" id="prev-btn" onclick="go(-1)">‹</button>
+      <button class="nav-btn" id="next-btn" onclick="go(1)">›</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ── PASSWORD ────────────────────────────────────────────
+// SHA-256 hash of the password — set your own!
+// Default: "onsiteaffiliate2025" → replace HASH below with your hash
+// To generate: open browser console, run:
+//   crypto.subtle.digest('SHA-256', new TextEncoder().encode('yourpassword')).then(b=>console.log([...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,'0')).join('')))
+const PASS_HASH = null; // Set to null to accept ANY non-empty password for testing. Replace with hash for production.
+
+async function sha256(str) {
+  const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(str));
+  return [...new Uint8Array(buf)].map(x => x.toString(16).padStart(2, '0')).join('');
+}
+
+async function tryLogin() {
+  const pw = document.getElementById('pw-input').value;
+  if (!pw) { document.getElementById('login-error').textContent = 'Please enter an access code'; return; }
+
+  if (PASS_HASH === null) {
+    // Testing mode: accept any password
+    unlock();
+    return;
+  }
+
+  const hash = await sha256(pw);
+  if (hash === PASS_HASH) {
+    unlock();
+  } else {
+    document.getElementById('login-error').textContent = 'Invalid access code';
+    document.getElementById('pw-input').value = '';
+  }
+}
+
+function unlock() {
+  document.getElementById('login-screen').classList.add('hidden');
+  document.getElementById('deck').classList.add('active');
+  sessionStorage.setItem('investor_auth', '1');
+  initDeck();
+}
+
+// Auto-login if already authenticated this session
+if (sessionStorage.getItem('investor_auth') === '1') {
+  document.getElementById('login-screen').classList.add('hidden');
+  document.getElementById('deck').classList.add('active');
+  window.addEventListener('DOMContentLoaded', initDeck);
+}
+
+// Enter key submits
+document.getElementById('pw-input').addEventListener('keydown', e => { if (e.key === 'Enter') tryLogin(); });
+
+// ── DECK NAV ────────────────────────────────────────────
+let current = 0;
+const slides = [];
+
+function initDeck() {
+  document.querySelectorAll('.slide').forEach((s, i) => {
+    slides.push(s);
+    if (i === 0) s.classList.add('active');
+  });
+  document.getElementById('total-slides').textContent = slides.length;
+
+  // Build dots
+  const dotsEl = document.getElementById('dots');
+  slides.forEach((_, i) => {
+    const d = document.createElement('div');
+    d.className = 'dot' + (i === 0 ? ' active' : '');
+    d.onclick = () => goTo(i);
+    dotsEl.appendChild(d);
+  });
+  updateNav();
+}
+
+function go(dir) { goTo(current + dir); }
+
+function goTo(idx) {
+  if (idx < 0 || idx >= slides.length || idx === current) return;
+  const prev = slides[current];
+  const next = slides[idx];
+  prev.classList.remove('active');
+  prev.classList.add(idx > current ? 'exit-left' : '');
+  setTimeout(() => prev.classList.remove('exit-left'), 500);
+  next.classList.add('active');
+  current = idx;
+  updateNav();
+}
+
+function updateNav() {
+  document.getElementById('current-slide').textContent = current + 1;
+  document.getElementById('prev-btn').disabled = current === 0;
+  document.getElementById('next-btn').disabled = current === slides.length - 1;
+  document.querySelectorAll('.dot').forEach((d, i) => d.classList.toggle('active', i === current));
+}
+
+// Keyboard nav
+document.addEventListener('keydown', e => {
+  if (document.getElementById('deck').classList.contains('active')) {
+    if (e.key === 'ArrowRight' || e.key === ' ') { e.preventDefault(); go(1); }
+    if (e.key === 'ArrowLeft') { e.preventDefault(); go(-1); }
+  }
+});
+</script>
+</body>
+</html>
