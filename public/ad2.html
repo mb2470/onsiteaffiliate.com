@@ -409,7 +409,7 @@
   // Fetch content JSON, fall back to defaults
   let contentData = defaultText;
   try {
-    const resp = await fetch('/src/content/ad-headlines.json?v=' + Date.now());
+    const resp = await fetch('/content/ad-headlines.json?v=' + Date.now());
     if (resp.ok) contentData = await resp.json();
   } catch(e) { /* use defaults */ }
 
