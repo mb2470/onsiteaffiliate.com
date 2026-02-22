@@ -1,69 +1,745 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="theme-color" content="#0a0a0f" />
-    <meta name="description" content="Chat with Onsite Affiliate" />
-
-    <!-- Favicons -->
-    <link rel="icon" type="image/x-icon" href="/favicon.ico" />
-    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png" />
-    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16.png" />
-    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
-
-    <!-- Google Analytics -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-HR93LCHR36"></script>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculate Your Onsite Commission Opportunity</title>
+    <script src="https://cdn.tailwindcss.com"></script>
     <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-      gtag('config', 'G-HR93LCHR36');
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brandPurple: '#818cf8',
+                        brandDark: '#4b5563',
+                        brandLightBg: '#f9fafb'
+                    }
+                }
+            }
+        }
     </script>
-
-    <title>Chat — Onsite Affiliate</title>
     <style>
-      * { margin: 0; padding: 0; box-sizing: border-box; }
-      body {
-        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-        background: #0a0a0f;
-        color: #e0e0e0;
-        min-height: 100vh;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-      }
-      .chat-container {
-        text-align: center;
-        padding: 2rem;
-      }
-      .chat-container h1 {
-        font-size: 2rem;
-        margin-bottom: 1rem;
-        background: linear-gradient(135deg, #a78bfa, #6366f1);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-      }
-      .chat-container p {
-        color: #888;
-        font-size: 1.1rem;
-      }
-      .back-link {
-        margin-top: 2rem;
-        display: inline-block;
-        color: #a78bfa;
-        text-decoration: none;
-        font-size: 0.95rem;
-      }
-      .back-link:hover { text-decoration: underline; }
+        @keyframes typing-dot {
+            0%, 60%, 100% { opacity: 0.3; transform: translateY(0); }
+            30% { opacity: 1; transform: translateY(-4px); }
+        }
+        .typing-dot { animation: typing-dot 1.4s infinite; }
+        .typing-dot:nth-child(2) { animation-delay: 0.2s; }
+        .typing-dot:nth-child(3) { animation-delay: 0.4s; }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(12px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .msg-animate { animation: fadeInUp 0.35s ease-out; }
+
+        @keyframes pulse-ring {
+            0% { box-shadow: 0 0 0 0 rgba(129, 140, 248, 0.4); }
+            70% { box-shadow: 0 0 0 8px rgba(129, 140, 248, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(129, 140, 248, 0); }
+        }
+        .pulse-ring { animation: pulse-ring 2s infinite; }
+
+        #chatMessages::-webkit-scrollbar { width: 6px; }
+        #chatMessages::-webkit-scrollbar-track { background: transparent; }
+        #chatMessages::-webkit-scrollbar-thumb { background: #d1d5db; border-radius: 3px; }
+
+        .results-card {
+            background: linear-gradient(135deg, #f9fafb 0%, #eef2ff 100%);
+        }
+
+        .option-btn {
+            transition: all 0.15s ease;
+        }
+        .option-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(129, 140, 248, 0.3);
+        }
     </style>
-  </head>
-  <body>
-    <div class="chat-container">
-      <h1>Chat</h1>
-      <p>Chat experience coming soon.</p>
-      <a class="back-link" href="/#/">← Back to Home</a>
+</head>
+<body class="bg-gray-100 min-h-screen flex items-center justify-center p-4">
+
+    <div class="w-full max-w-lg bg-white rounded-2xl shadow-2xl overflow-hidden border border-gray-200 flex flex-col" style="height: min(700px, 90vh);">
+        <!-- Header -->
+        <div class="bg-black px-6 py-4 text-white flex items-center gap-3 shrink-0">
+            <div class="w-10 h-10 rounded-full bg-brandPurple flex items-center justify-center text-lg font-bold">OC</div>
+            <div>
+                <h1 class="text-sm font-bold uppercase tracking-wide">Onsite Commission Calculator</h1>
+                <p class="text-gray-400 text-xs">Estimate your incremental sales lift</p>
+            </div>
+        </div>
+
+        <!-- Chat Messages -->
+        <div id="chatMessages" class="flex-1 overflow-y-auto px-4 py-4 space-y-3">
+        </div>
+
+        <!-- Input Area -->
+        <div id="inputArea" class="border-t border-gray-200 px-4 py-3 shrink-0">
+            <div class="flex gap-2">
+                <input type="text" id="userInput" placeholder="Type your answer..."
+                    class="flex-1 px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-brandPurple focus:border-brandPurple outline-none text-sm"
+                    autocomplete="off">
+                <button id="sendBtn" onclick="handleSend()"
+                    class="bg-brandPurple hover:opacity-90 text-white px-5 py-3 rounded-xl font-semibold text-sm transition-all pulse-ring">
+                    Send
+                </button>
+            </div>
+        </div>
     </div>
-  </body>
+
+<script>
+    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwTLGqhWFEMmLIy4bNlyRVWwkbl4gfYrMbZ8v9bmR7soK93bYQSPzORh2G9iZE9oZ8wIA/exec';
+    const formatCurrency = (val) => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(val);
+    const formatNumber = (val) => new Intl.NumberFormat('en-US').format(val);
+
+    const chatMessages = document.getElementById('chatMessages');
+    const userInput = document.getElementById('userInput');
+    const sendBtn = document.getElementById('sendBtn');
+    const inputArea = document.getElementById('inputArea');
+
+    // Conversation state
+    let step = 0;
+    const data = {
+        name: '',
+        website: '',
+        skus: 0,
+        visitors: 0,
+        baselineCR: 0,
+        aov: 0,
+        existingCoverage: 0,
+        placement: '',
+        placementLabel: '',
+        email: ''
+    };
+
+    // Research findings from website crawl
+    const findings = {
+        platform: null,
+        estimatedSkus: null,
+        hasUGC: false,
+        ugcPlatforms: [],
+        description: null,
+        researchDone: false
+    };
+
+    // Steps definition
+    const STEPS = {
+        ASK_NAME: 0,
+        ASK_WEBSITE: 1,
+        RESEARCH_SITE: 2,
+        CONFIRM_SKUS: 3,
+        ASK_SKUS: 4,
+        ASK_VISITORS: 5,
+        ASK_CR: 6,
+        ASK_AOV: 7,
+        ASK_COVERAGE: 8,
+        ASK_PLACEMENT: 9,
+        SHOW_RESULTS: 10,
+        ASK_EMAIL_OFFER: 11,
+        ASK_EMAIL: 12,
+        DONE: 13
+    };
+
+    function scrollToBottom() {
+        setTimeout(() => {
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }, 50);
+    }
+
+    function addBotMessage(html, extraClass = '') {
+        const wrapper = document.createElement('div');
+        wrapper.className = 'flex items-start gap-2 msg-animate ' + extraClass;
+        wrapper.innerHTML = `
+            <div class="w-7 h-7 rounded-full bg-brandPurple flex items-center justify-center text-white text-xs font-bold shrink-0 mt-0.5">OC</div>
+            <div class="bg-gray-100 rounded-2xl rounded-tl-md px-4 py-3 max-w-[85%] text-sm text-gray-800 leading-relaxed">${html}</div>
+        `;
+        chatMessages.appendChild(wrapper);
+        scrollToBottom();
+    }
+
+    function addUserMessage(text) {
+        const wrapper = document.createElement('div');
+        wrapper.className = 'flex justify-end msg-animate';
+        wrapper.innerHTML = `
+            <div class="bg-brandPurple text-white rounded-2xl rounded-tr-md px-4 py-3 max-w-[80%] text-sm leading-relaxed">${text}</div>
+        `;
+        chatMessages.appendChild(wrapper);
+        scrollToBottom();
+    }
+
+    function addResultsCard(results) {
+        const wrapper = document.createElement('div');
+        wrapper.className = 'flex items-start gap-2 msg-animate';
+        wrapper.innerHTML = `
+            <div class="w-7 h-7 rounded-full bg-brandPurple flex items-center justify-center text-white text-xs font-bold shrink-0 mt-0.5">OC</div>
+            <div class="results-card rounded-2xl rounded-tl-md px-5 py-5 max-w-[90%] border border-indigo-100 w-full">
+                <h3 class="text-xs font-black text-brandDark uppercase tracking-widest mb-4 text-center">Your Custom Onsite Commission Report</h3>
+
+                <div class="text-center mb-4">
+                    <p class="text-xs text-brandDark italic mb-1">Estimated Monthly Incremental Sales Lift:</p>
+                    <p class="text-3xl font-black text-brandPurple">${results.incrementalFormatted}</p>
+                </div>
+
+                <div class="space-y-2 mb-4">
+                    <div class="flex justify-between items-center bg-white px-3 py-2.5 rounded-lg border border-gray-100">
+                        <span class="text-xs text-brandDark font-medium">Sales Lift</span>
+                        <span class="text-green-600 font-bold text-sm">+${results.salesLiftPct}%</span>
+                    </div>
+                    <div class="bg-white px-3 py-2.5 rounded-lg border border-gray-100 text-center">
+                        <p class="text-xs text-brandDark italic mb-1">Return on Commission Spend (ROCS) at 5%:</p>
+                        <p class="text-xl font-bold text-brandPurple">${results.rocs}x</p>
+                    </div>
+                </div>
+
+                <p class="text-xs text-brandDark/60 italic text-center">ROCS = The return on each commission dollar invested in Creator UGC</p>
+            </div>
+        `;
+        chatMessages.appendChild(wrapper);
+        scrollToBottom();
+    }
+
+    function addOptionButtons(options) {
+        const wrapper = document.createElement('div');
+        wrapper.className = 'flex items-start gap-2 msg-animate';
+        wrapper.id = 'optionButtons';
+        let btnsHtml = options.map(opt =>
+            `<button onclick="selectOption('${opt.value}', '${opt.label.replace(/'/g, "\\'")}')"
+                class="option-btn block w-full text-left px-4 py-2.5 bg-white border border-gray-200 rounded-xl text-sm text-brandDark hover:border-brandPurple hover:bg-indigo-50 font-medium">${opt.label}</button>`
+        ).join('');
+
+        wrapper.innerHTML = `
+            <div class="w-7 h-7 shrink-0"></div>
+            <div class="space-y-2 max-w-[85%] w-full">${btnsHtml}</div>
+        `;
+        chatMessages.appendChild(wrapper);
+        scrollToBottom();
+    }
+
+    function addYesNoButtons() {
+        const wrapper = document.createElement('div');
+        wrapper.className = 'flex items-start gap-2 msg-animate';
+        wrapper.id = 'optionButtons';
+        wrapper.innerHTML = `
+            <div class="w-7 h-7 shrink-0"></div>
+            <div class="flex gap-2">
+                <button onclick="selectOption('yes', 'Yes')"
+                    class="option-btn px-6 py-2.5 bg-brandPurple text-white rounded-xl text-sm font-semibold hover:opacity-90">Yes, please!</button>
+                <button onclick="selectOption('no', 'No thanks')"
+                    class="option-btn px-6 py-2.5 bg-white border border-gray-200 rounded-xl text-sm text-brandDark font-semibold hover:border-brandPurple">No thanks</button>
+            </div>
+        `;
+        chatMessages.appendChild(wrapper);
+        scrollToBottom();
+    }
+
+    function showTypingIndicator() {
+        const wrapper = document.createElement('div');
+        wrapper.className = 'flex items-start gap-2';
+        wrapper.id = 'typingIndicator';
+        wrapper.innerHTML = `
+            <div class="w-7 h-7 rounded-full bg-brandPurple flex items-center justify-center text-white text-xs font-bold shrink-0 mt-0.5">OC</div>
+            <div class="bg-gray-100 rounded-2xl rounded-tl-md px-4 py-3 flex gap-1.5 items-center">
+                <div class="w-2 h-2 bg-gray-400 rounded-full typing-dot"></div>
+                <div class="w-2 h-2 bg-gray-400 rounded-full typing-dot"></div>
+                <div class="w-2 h-2 bg-gray-400 rounded-full typing-dot"></div>
+            </div>
+        `;
+        chatMessages.appendChild(wrapper);
+        scrollToBottom();
+    }
+
+    function removeTypingIndicator() {
+        const el = document.getElementById('typingIndicator');
+        if (el) el.remove();
+    }
+
+    function removeOptionButtons() {
+        const el = document.getElementById('optionButtons');
+        if (el) el.remove();
+    }
+
+    function setInputVisible(visible) {
+        inputArea.style.display = visible ? 'block' : 'none';
+    }
+
+    function setInputPlaceholder(text) {
+        userInput.placeholder = text;
+    }
+
+    function setInputType(type) {
+        userInput.type = type;
+    }
+
+    function botTypeThenSay(html, delay = 800, extraClass = '') {
+        return new Promise(resolve => {
+            showTypingIndicator();
+            setTimeout(() => {
+                removeTypingIndicator();
+                addBotMessage(html, extraClass);
+                resolve();
+            }, delay);
+        });
+    }
+
+    // Website research engine
+    async function researchWebsite(websiteUrl) {
+        let baseUrl = websiteUrl;
+        if (!baseUrl.startsWith('http')) baseUrl = 'https://' + baseUrl;
+        baseUrl = baseUrl.replace(/\/$/, '');
+
+        const corsProxy = (url) => `https://api.allorigins.win/get?url=${encodeURIComponent(url)}`;
+
+        const proxyFetch = async (url, timeoutMs = 8000) => {
+            const controller = new AbortController();
+            const timer = setTimeout(() => controller.abort(), timeoutMs);
+            try {
+                const res = await fetch(corsProxy(url), { signal: controller.signal });
+                const json = await res.json();
+                return json.contents || '';
+            } catch (e) {
+                return '';
+            } finally {
+                clearTimeout(timer);
+            }
+        };
+
+        try {
+            // Fetch homepage, sitemap, and Shopify products API in parallel
+            const [homepage, sitemap, shopifyProducts] = await Promise.all([
+                proxyFetch(baseUrl),
+                proxyFetch(baseUrl + '/sitemap.xml'),
+                proxyFetch(baseUrl + '/products.json?limit=250')
+            ]);
+
+            // --- Detect platform from homepage ---
+            if (homepage) {
+                const lower = homepage.toLowerCase();
+                if (lower.includes('cdn.shopify.com') || lower.includes('shopify.com')) {
+                    findings.platform = 'Shopify';
+                } else if (lower.includes('woocommerce')) {
+                    findings.platform = 'WooCommerce';
+                } else if (lower.includes('bigcommerce')) {
+                    findings.platform = 'BigCommerce';
+                } else if (lower.includes('magento') || lower.includes('mage')) {
+                    findings.platform = 'Magento';
+                } else if (lower.includes('salesforce') || lower.includes('demandware')) {
+                    findings.platform = 'Salesforce Commerce Cloud';
+                }
+
+                // Detect UGC / review platforms
+                const ugcChecks = [
+                    ['Yotpo', ['yotpo']],
+                    ['Bazaarvoice', ['bazaarvoice', 'bvapi']],
+                    ['Tolstoy', ['gotolstoy', 'player.gotolstoy']],
+                    ['Fera', ['fera.ai']],
+                    ['Loox', ['loox.io']],
+                    ['Judge.me', ['judge.me']],
+                    ['Stamped', ['stamped.io']],
+                    ['Okendo', ['okendo']],
+                    ['TurnTo', ['turnto.com']],
+                    ['PowerReviews', ['powerreviews']],
+                    ['Pixlee / Emplifi', ['pixlee', 'emplifi']],
+                    ['Taggbox', ['taggbox']],
+                    ['MiloTree', ['milotree']]
+                ];
+                ugcChecks.forEach(([name, patterns]) => {
+                    if (patterns.some(p => lower.includes(p))) {
+                        findings.ugcPlatforms.push(name);
+                        findings.hasUGC = true;
+                    }
+                });
+
+                // Extract meta description
+                const descMatch = homepage.match(/<meta[^>]+(?:name|property)=["'](?:description|og:description)["'][^>]+content=["']([^"']{10,}?)["']/i)
+                    || homepage.match(/<meta[^>]+content=["']([^"']{10,}?)["'][^>]+(?:name|property)=["'](?:description|og:description)["']/i);
+                if (descMatch) {
+                    findings.description = descMatch[1].substring(0, 200);
+                }
+            }
+
+            // --- Try Shopify products.json ---
+            if (shopifyProducts) {
+                try {
+                    const prodData = JSON.parse(shopifyProducts);
+                    if (prodData.products && Array.isArray(prodData.products)) {
+                        findings.platform = findings.platform || 'Shopify';
+                        findings.estimatedSkus = prodData.products.length >= 250
+                            ? null  // 250 is the max per page, actual count is higher
+                            : prodData.products.length;
+                    }
+                } catch (e) {}
+            }
+
+            // --- Parse sitemap for product count ---
+            if (sitemap && !findings.estimatedSkus) {
+                const isSitemapIndex = sitemap.includes('<sitemapindex');
+                let productUrlCount = 0;
+
+                if (isSitemapIndex) {
+                    // Find a product-specific sub-sitemap
+                    const sitemapLocs = sitemap.match(/<loc>([^<]+)<\/loc>/g) || [];
+                    for (const match of sitemapLocs) {
+                        const url = match.replace(/<\/?loc>/g, '');
+                        if (url.toLowerCase().includes('product')) {
+                            const subSitemap = await proxyFetch(url);
+                            if (subSitemap) {
+                                const subUrls = subSitemap.match(/<loc>[^<]+<\/loc>/g) || [];
+                                productUrlCount = subUrls.length;
+                            }
+                            break;
+                        }
+                    }
+                } else {
+                    // Regular sitemap — count product-looking URLs
+                    const allLocs = sitemap.match(/<loc>([^<]+)<\/loc>/g) || [];
+                    allLocs.forEach(match => {
+                        const url = match.replace(/<\/?loc>/g, '').toLowerCase();
+                        if (url.includes('/product') || url.includes('/p/') || url.includes('/shop/') || url.includes('/item/')) {
+                            productUrlCount++;
+                        }
+                    });
+                }
+
+                if (productUrlCount > 0) {
+                    findings.estimatedSkus = productUrlCount;
+                }
+            }
+        } catch (e) {
+            console.error('Research error:', e);
+        }
+
+        findings.researchDone = true;
+    }
+
+    function addFindingsCard() {
+        const lines = [];
+        if (findings.platform) lines.push(`<strong>Platform:</strong> ${findings.platform}`);
+        if (findings.estimatedSkus) lines.push(`<strong>Estimated Products:</strong> ~${formatNumber(findings.estimatedSkus)} SKUs`);
+        if (findings.ugcPlatforms.length) lines.push(`<strong>UGC Tools Detected:</strong> ${findings.ugcPlatforms.join(', ')}`);
+        if (findings.description) lines.push(`<strong>About:</strong> <span class="text-gray-500 italic">"${findings.description}"</span>`);
+
+        if (lines.length === 0) return;
+
+        const wrapper = document.createElement('div');
+        wrapper.className = 'flex items-start gap-2 msg-animate';
+        wrapper.innerHTML = `
+            <div class="w-7 h-7 rounded-full bg-brandPurple flex items-center justify-center text-white text-xs font-bold shrink-0 mt-0.5">OC</div>
+            <div class="bg-indigo-50 border border-indigo-100 rounded-2xl rounded-tl-md px-4 py-4 max-w-[85%] text-sm text-gray-800 leading-relaxed space-y-1.5">
+                <p class="text-xs font-bold text-brandPurple uppercase tracking-widest mb-2">Site Research Results</p>
+                ${lines.map(l => `<p class="text-sm">${l}</p>`).join('')}
+            </div>
+        `;
+        chatMessages.appendChild(wrapper);
+        scrollToBottom();
+    }
+
+    // Calculation engine (preserved from original)
+    function calculate() {
+        const visitors = data.visitors;
+        const baselineCR = data.baselineCR / 100;
+        const aov = data.aov;
+        const playbackRate = parseFloat(data.placement);
+        const existingCoverage = data.existingCoverage / 100;
+
+        if (visitors && baselineCR && aov && playbackRate) {
+            const liftMultiplier = 1.563;
+            const videoCR = baselineCR * liftMultiplier;
+            const watchers = visitors * playbackRate;
+            const nonWatchers = visitors * (1 - playbackRate);
+            const baselineSales = visitors * baselineCR * aov;
+
+            const salesWithVideoPlayback = watchers * videoCR * aov;
+            const salesWithoutVideoPlayback = nonWatchers * baselineCR * aov;
+            const salesWithUGC = salesWithVideoPlayback + salesWithoutVideoPlayback;
+
+            let incrementalRevenue = salesWithUGC - baselineSales;
+            incrementalRevenue = incrementalRevenue * (1 - existingCoverage);
+
+            const commissionRate = 0.05;
+            const totalCommissionsEarned = salesWithVideoPlayback * commissionRate;
+            const dynamicROCS = incrementalRevenue / totalCommissionsEarned;
+            const salesLiftPct = ((incrementalRevenue / baselineSales) * 100).toFixed(1);
+
+            return {
+                incrementalRevenue,
+                incrementalFormatted: formatCurrency(incrementalRevenue),
+                salesLiftPct,
+                rocs: dynamicROCS.toFixed(1),
+                salesWithVideoPlayback
+            };
+        }
+        return null;
+    }
+
+    // Submit to Google Apps Script
+    function submitData(results) {
+        const calcData = {
+            name: data.name,
+            email: data.email,
+            website: data.website,
+            skus: data.skus.toString(),
+            visitors: data.visitors.toString(),
+            baselineCR: data.baselineCR.toString(),
+            aov: data.aov.toString(),
+            existingCoverage: data.existingCoverage.toString(),
+            placement: data.placementLabel,
+            incrementalRevenue: results.incrementalFormatted,
+            platform: findings.platform || '',
+            ugcTools: findings.ugcPlatforms.join(', ')
+        };
+
+        return fetch(SCRIPT_URL, {
+            method: 'POST',
+            mode: 'no-cors',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(calcData)
+        });
+    }
+
+    function selectOption(value, label) {
+        removeOptionButtons();
+        addUserMessage(label);
+        processStep(value);
+    }
+
+    async function processStep(input) {
+        switch (step) {
+            case STEPS.ASK_NAME:
+                data.name = input.trim();
+                step = STEPS.ASK_WEBSITE;
+                await botTypeThenSay(`Great to meet you, <strong>${data.name}</strong>! Let's figure out how much incremental revenue an Onsite Commission Program could drive for your business.`);
+                await botTypeThenSay(`What's your company website URL?`, 600);
+                setInputPlaceholder('e.g. www.yourbrand.com');
+                setInputType('text');
+                break;
+
+            case STEPS.ASK_WEBSITE:
+                data.website = input.trim().toLowerCase();
+                step = STEPS.RESEARCH_SITE;
+                setInputVisible(false);
+                await botTypeThenSay(`Got it! Let me research <strong>${data.website}</strong> to learn about your business...`, 500);
+                showTypingIndicator();
+
+                // Actually crawl the website
+                await researchWebsite(data.website);
+                removeTypingIndicator();
+
+                if (findings.researchDone && (findings.platform || findings.estimatedSkus || findings.ugcPlatforms.length)) {
+                    addBotMessage(`I've done some research on <strong>${data.website}</strong>! Here's what I found:`);
+                    await new Promise(r => setTimeout(r, 400));
+                    addFindingsCard();
+                    await botTypeThenSay(`I'll use these findings to streamline your estimate. You can correct anything that doesn't look right as we go!`, 700);
+
+                    // If we found SKUs, ask user to confirm
+                    if (findings.estimatedSkus) {
+                        step = STEPS.CONFIRM_SKUS;
+                        await botTypeThenSay(`I estimated about <strong>${formatNumber(findings.estimatedSkus)} parent product SKUs</strong> from your sitemap. Does that look about right?`, 600);
+                        addOptionButtons([
+                            { value: 'yes', label: 'Yes, that\'s close' },
+                            { value: 'no', label: 'No, let me enter the correct number' }
+                        ]);
+                    } else {
+                        step = STEPS.ASK_SKUS;
+                        await botTypeThenSay(`I wasn't able to determine your product count automatically. How many <strong>parent product SKUs</strong> do you currently offer?`, 600);
+                        setInputVisible(true);
+                        setInputPlaceholder('e.g. 4000');
+                        setInputType('number');
+                    }
+                } else {
+                    // Research didn't find anything — fall back to normal flow
+                    addBotMessage(`I've pulled up <strong>${data.website}</strong>. Now I just need a few details about your business to build your custom estimate. This will only take a minute!`);
+                    step = STEPS.ASK_SKUS;
+                    await botTypeThenSay(`How many <strong>parent product SKUs</strong> do you currently offer?`, 600);
+                    setInputVisible(true);
+                    setInputPlaceholder('e.g. 4000');
+                    setInputType('number');
+                }
+                break;
+
+            case STEPS.CONFIRM_SKUS:
+                if (input === 'yes') {
+                    data.skus = findings.estimatedSkus;
+                    step = STEPS.ASK_VISITORS;
+                    await botTypeThenSay(`<strong>${formatNumber(data.skus)} SKUs</strong> — nice catalog! How many <strong>unique visitors</strong> does your site get each month?`, 700);
+                    setInputVisible(true);
+                    setInputPlaceholder('e.g. 1000000');
+                    setInputType('number');
+                } else {
+                    step = STEPS.ASK_SKUS;
+                    setInputVisible(true);
+                    await botTypeThenSay(`No problem! How many <strong>parent product SKUs</strong> do you currently offer?`, 600);
+                    setInputPlaceholder('e.g. 4000');
+                    setInputType('number');
+                }
+                break;
+
+            case STEPS.ASK_SKUS:
+                data.skus = parseFloat(input) || 0;
+                if (data.skus <= 0) {
+                    await botTypeThenSay(`Hmm, that doesn't look right. Please enter a number greater than 0.`, 400);
+                    return;
+                }
+                step = STEPS.ASK_VISITORS;
+                await botTypeThenSay(`<strong>${formatNumber(data.skus)} SKUs</strong> — nice catalog! How many <strong>unique visitors</strong> does your site get each month?`, 700);
+                setInputPlaceholder('e.g. 1000000');
+                break;
+
+            case STEPS.ASK_VISITORS:
+                data.visitors = parseFloat(input) || 0;
+                if (data.visitors <= 0) {
+                    await botTypeThenSay(`Please enter a valid number of monthly visitors.`, 400);
+                    return;
+                }
+                step = STEPS.ASK_CR;
+                await botTypeThenSay(`<strong>${formatNumber(data.visitors)} monthly visitors</strong> — solid traffic! What's your current <strong>unique visitor conversion rate</strong> across all channels? <span class="text-gray-500">(e.g. enter 1.6 for 1.6%)</span>`, 700);
+                setInputPlaceholder('e.g. 1.6');
+                setInputType('number');
+                break;
+
+            case STEPS.ASK_CR:
+                data.baselineCR = parseFloat(input) || 0;
+                if (data.baselineCR <= 0 || data.baselineCR > 100) {
+                    await botTypeThenSay(`Please enter a valid conversion rate (e.g. 1.6 for 1.6%).`, 400);
+                    return;
+                }
+                step = STEPS.ASK_AOV;
+                await botTypeThenSay(`<strong>${data.baselineCR}% conversion rate</strong> — got it. What's your <strong>Average Order Value (AOV)</strong> across all channels? <span class="text-gray-500">(just the number, e.g. 141)</span>`, 700);
+                setInputPlaceholder('e.g. 141');
+                break;
+
+            case STEPS.ASK_AOV:
+                data.aov = parseFloat(input) || 0;
+                if (data.aov <= 0) {
+                    await botTypeThenSay(`Please enter a valid AOV amount.`, 400);
+                    return;
+                }
+                step = STEPS.ASK_COVERAGE;
+                if (findings.ugcPlatforms.length > 0) {
+                    await botTypeThenSay(`<strong>${formatCurrency(data.aov)} AOV</strong> — nice. I noticed you're already using <strong>${findings.ugcPlatforms.join(' and ')}</strong> for Creator UGC. What <strong>percentage of your parent product SKUs</strong> currently have UGC coverage? <span class="text-gray-500">(e.g. enter 25 for 25%)</span>`, 700);
+                } else {
+                    await botTypeThenSay(`<strong>${formatCurrency(data.aov)} AOV</strong> — nice. What <strong>percentage of your parent product SKUs</strong> already have Creator UGC coverage? <span class="text-gray-500">(e.g. enter 25 for 25%)</span>`, 700);
+                }
+                setInputPlaceholder('e.g. 25');
+                break;
+
+            case STEPS.ASK_COVERAGE:
+                data.existingCoverage = parseFloat(input) || 0;
+                if (data.existingCoverage < 0 || data.existingCoverage > 100) {
+                    await botTypeThenSay(`Please enter a percentage between 0 and 100.`, 400);
+                    return;
+                }
+                step = STEPS.ASK_PLACEMENT;
+                setInputVisible(false);
+                await botTypeThenSay(`<strong>${data.existingCoverage}% existing coverage</strong> — noted. Last question! Where do you mostly place Creator UGC on your site today?`, 700);
+                addOptionButtons([
+                    { value: '0.24234', label: 'Mostly Above The Fold' },
+                    { value: '0.19442', label: 'Both Above & Below The Fold' },
+                    { value: '0.13622', label: 'Mostly Below The Fold' }
+                ]);
+                break;
+
+            case STEPS.ASK_PLACEMENT:
+                data.placement = input;
+                const placementLabels = {
+                    '0.24234': 'Mostly Above The Fold',
+                    '0.19442': 'Both Above & Below The Fold',
+                    '0.13622': 'Mostly Below The Fold'
+                };
+                data.placementLabel = placementLabels[input] || input;
+                step = STEPS.SHOW_RESULTS;
+
+                await botTypeThenSay(`Excellent! I've got everything I need. Let me crunch the numbers for you...`, 600);
+                showTypingIndicator();
+                setTimeout(() => {
+                    removeTypingIndicator();
+                    const results = calculate();
+                    if (results) {
+                        addBotMessage(`Here are your results, <strong>${data.name}</strong>:`);
+                        setTimeout(() => {
+                            addResultsCard(results);
+                            step = STEPS.ASK_EMAIL_OFFER;
+                            setTimeout(async () => {
+                                await botTypeThenSay(`Adding Creator UGC through an Onsite Commission Program could drive <strong>${results.incrementalFormatted}</strong> in incremental monthly revenue for your business, with a <strong>${results.rocs}x return</strong> on every commission dollar spent.`, 800);
+                                await botTypeThenSay(`Would you like me to send this analysis to your email so you can share it with your team?`, 600);
+                                addYesNoButtons();
+                            }, 500);
+                        }, 400);
+                    }
+                }, 1500);
+                break;
+
+            case STEPS.ASK_EMAIL_OFFER:
+                if (input === 'yes') {
+                    step = STEPS.ASK_EMAIL;
+                    setInputVisible(true);
+                    await botTypeThenSay(`What's the best company email address to send this to?`, 600);
+                    setInputPlaceholder('you@company.com');
+                    setInputType('email');
+                } else {
+                    step = STEPS.DONE;
+                    const resultsNoEmail = calculate();
+                    if (resultsNoEmail) submitData(resultsNoEmail);
+                    await botTypeThenSay(`No problem at all! If you'd like to explore what an Onsite Commission Program can do for your business, you can book a meeting with our team anytime.`, 600);
+                    await botTypeThenSay(`<a href="https://www.onsiteaffiliate.com/appointments" target="_blank" class="inline-block w-full text-center bg-brandPurple text-white font-bold py-3 px-4 rounded-xl hover:opacity-90 transition-all text-sm uppercase tracking-wide">Book a Meeting With Our Team</a>`, 600);
+                    await botTypeThenSay(`Thanks for using the calculator, <strong>${data.name}</strong>! Feel free to come back anytime.`, 600);
+                    setInputVisible(false);
+                }
+                break;
+
+            case STEPS.ASK_EMAIL:
+                const emailVal = input.trim().toLowerCase();
+                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                if (!emailRegex.test(emailVal)) {
+                    await botTypeThenSay(`That doesn't look like a valid email address. Could you try again?`, 400);
+                    return;
+                }
+                data.email = emailVal;
+                step = STEPS.DONE;
+                setInputVisible(false);
+
+                const results = calculate();
+                if (results) {
+                    showTypingIndicator();
+                    submitData(results).then(() => {
+                        removeTypingIndicator();
+                        addBotMessage(`Your analysis has been sent to <strong>${data.email}</strong>! Keep an eye on your inbox.`);
+                        setTimeout(async () => {
+                            await botTypeThenSay(`When you're ready to get started, our team would love to walk you through the next steps.`, 700);
+                            await botTypeThenSay(`<a href="https://www.onsiteaffiliate.com/appointments" target="_blank" class="inline-block w-full text-center bg-brandPurple text-white font-bold py-3 px-4 rounded-xl hover:opacity-90 transition-all text-sm uppercase tracking-wide">Book a Meeting With Our Team</a>`, 600);
+                            await botTypeThenSay(`Thanks for chatting, <strong>${data.name}</strong>! We look forward to helping you unlock new revenue through Onsite Commissions.`, 600);
+                        }, 400);
+                    }).catch(() => {
+                        removeTypingIndicator();
+                        addBotMessage(`I had a little trouble sending that, but don't worry — your results are right here in the chat! You can also reach our team directly.`);
+                        setTimeout(async () => {
+                            await botTypeThenSay(`<a href="https://www.onsiteaffiliate.com/appointments" target="_blank" class="inline-block w-full text-center bg-brandPurple text-white font-bold py-3 px-4 rounded-xl hover:opacity-90 transition-all text-sm uppercase tracking-wide">Book a Meeting With Our Team</a>`, 600);
+                        }, 400);
+                    });
+                }
+                break;
+        }
+    }
+
+    function handleSend() {
+        const val = userInput.value.trim();
+        if (!val) return;
+        addUserMessage(val);
+        userInput.value = '';
+        processStep(val);
+    }
+
+    userInput.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') handleSend();
+    });
+
+    // Start the conversation
+    (async function init() {
+        await botTypeThenSay(`Hi there! I'm the <strong>Onsite Commission Calculator</strong>. I'll help you estimate how much incremental revenue an Onsite Commission Program could drive for your business.`, 1000);
+        await botTypeThenSay(`Let's get started — what's your name?`, 600);
+        setInputPlaceholder('Enter your name...');
+        setInputType('text');
+        userInput.focus();
+    })();
+</script>
+</body>
 </html>
