@@ -15,6 +15,18 @@ function trackPageView(pagePath, pageTitle) {
   }
 }
 
+/* ───────────── LINKEDIN ENHANCED MATCHING ───────────── */
+function linkedInEnhancedMatch({ email, firstName, lastName, companyName }) {
+  if (window.lintrk) {
+    const profile = {};
+    if (email) profile.email = email;
+    if (firstName) profile.firstName = firstName;
+    if (lastName) profile.lastName = lastName;
+    if (companyName) profile.companyName = companyName;
+    window.lintrk('setNewProfile', profile);
+  }
+}
+
 /* ───────────── ROUTE CONTEXT ───────────── */
 const routes = {
   "/": "home",
@@ -191,6 +203,7 @@ function CalculatorLightbox({ isOpen, onClose }) {
       calculate();
       submitToSheets();
       trackEvent('calculator_completed', { email: form.email, website: form.website });
+      linkedInEnhancedMatch({ email: form.email });
     }
     setStep(target);
   };
