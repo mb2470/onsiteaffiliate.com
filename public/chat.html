@@ -35,86 +35,496 @@
       gtag('config', 'G-HR93LCHR36');
     </script>
 
+    <!-- Fonts (matching main site) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+
     <title>Calculate Your Onsite Commission Opportunity</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        brandPurple: '#818cf8',
-                        brandDark: '#4b5563',
-                        brandLightBg: '#f9fafb'
-                    }
-                }
-            }
-        }
-    </script>
     <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        :root {
+            --purple: #8B5CF6;
+            --purple-deep: #6D28D9;
+            --blue: #3B82F6;
+            --blue-bright: #2563EB;
+            --bg-black: #0a0a0f;
+            --bg-dark: #0f0f1a;
+            --bg-card: rgba(255,255,255,0.04);
+            --text: #e2e2f0;
+            --text-muted: #9999b8;
+            --border: rgba(139,92,246,0.25);
+            --border-subtle: rgba(255,255,255,0.06);
+            --gradient: linear-gradient(135deg, #9333EA, #6D28D9, #3B82F6);
+            --gradient-text: linear-gradient(90deg, #A78BFA, #818CF8, #60A5FA);
+            --font-display: 'Outfit', sans-serif;
+            --font-body: 'Plus Jakarta Sans', sans-serif;
+        }
+
+        body {
+            background: var(--bg-black);
+            font-family: var(--font-body);
+            color: var(--text);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 16px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Background glow */
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background: radial-gradient(ellipse at 30% 20%, rgba(109, 40, 217, 0.15) 0%, transparent 50%),
+                        radial-gradient(ellipse at 70% 80%, rgba(59, 130, 246, 0.08) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* Lightbox overlay */
+        .lightbox-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            z-index: 1;
+        }
+
+        /* Modal container */
+        .modal {
+            position: relative;
+            z-index: 2;
+            width: 100%;
+            max-width: 480px;
+            height: min(720px, 92vh);
+            background: var(--bg-dark);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            box-shadow: 0 0 80px rgba(139, 92, 246, 0.08), 0 25px 50px rgba(0, 0, 0, 0.5);
+        }
+
+        /* Header */
+        .modal-header {
+            padding: 20px 24px;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            border-bottom: 1px solid var(--border-subtle);
+            flex-shrink: 0;
+            position: relative;
+        }
+        .modal-header::after {
+            content: '';
+            position: absolute;
+            bottom: -1px;
+            left: 24px;
+            right: 24px;
+            height: 1px;
+            background: var(--gradient);
+            opacity: 0.4;
+        }
+        .header-icon {
+            width: 42px;
+            height: 42px;
+            border-radius: 12px;
+            background: var(--gradient);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: var(--font-display);
+            font-weight: 800;
+            font-size: 14px;
+            color: #fff;
+            flex-shrink: 0;
+        }
+        .header-title {
+            font-family: var(--font-display);
+            font-weight: 700;
+            font-size: 15px;
+            letter-spacing: 0.04em;
+            color: #fff;
+        }
+        .header-subtitle {
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-top: 2px;
+        }
+        .close-btn {
+            position: absolute;
+            top: 16px;
+            right: 16px;
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            border: 1px solid var(--border-subtle);
+            background: transparent;
+            color: var(--text-muted);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            transition: all 0.15s;
+        }
+        .close-btn:hover {
+            background: rgba(255,255,255,0.06);
+            color: #fff;
+            border-color: var(--border);
+        }
+
+        /* Chat area */
+        #chatMessages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        #chatMessages::-webkit-scrollbar { width: 5px; }
+        #chatMessages::-webkit-scrollbar-track { background: transparent; }
+        #chatMessages::-webkit-scrollbar-thumb { background: rgba(139,92,246,0.3); border-radius: 3px; }
+
+        /* Messages */
+        .msg-row { display: flex; align-items: flex-start; gap: 10px; }
+        .msg-row.user { justify-content: flex-end; }
+
+        .bot-avatar {
+            width: 28px;
+            height: 28px;
+            border-radius: 8px;
+            background: var(--gradient);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: var(--font-display);
+            font-weight: 800;
+            font-size: 10px;
+            color: #fff;
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+
+        .bot-bubble {
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: 16px;
+            border-top-left-radius: 4px;
+            padding: 12px 16px;
+            max-width: 85%;
+            font-size: 13.5px;
+            line-height: 1.6;
+            color: var(--text);
+        }
+        .bot-bubble strong { color: #fff; font-weight: 600; }
+        .bot-bubble .text-gray-500 { color: var(--text-muted); }
+
+        .user-bubble {
+            background: var(--gradient);
+            border-radius: 16px;
+            border-top-right-radius: 4px;
+            padding: 12px 16px;
+            max-width: 80%;
+            font-size: 13.5px;
+            line-height: 1.6;
+            color: #fff;
+        }
+
+        /* Typing indicator */
+        .typing-bubble {
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: 16px;
+            border-top-left-radius: 4px;
+            padding: 12px 16px;
+            display: flex;
+            gap: 6px;
+            align-items: center;
+        }
+        .typing-dot {
+            width: 7px;
+            height: 7px;
+            background: var(--purple);
+            border-radius: 50%;
+            animation: typing-dot 1.4s infinite;
+        }
+        .typing-dot:nth-child(2) { animation-delay: 0.2s; }
+        .typing-dot:nth-child(3) { animation-delay: 0.4s; }
+
         @keyframes typing-dot {
             0%, 60%, 100% { opacity: 0.3; transform: translateY(0); }
             30% { opacity: 1; transform: translateY(-4px); }
         }
-        .typing-dot { animation: typing-dot 1.4s infinite; }
-        .typing-dot:nth-child(2) { animation-delay: 0.2s; }
-        .typing-dot:nth-child(3) { animation-delay: 0.4s; }
 
         @keyframes fadeInUp {
-            from { opacity: 0; transform: translateY(12px); }
+            from { opacity: 0; transform: translateY(10px); }
             to { opacity: 1; transform: translateY(0); }
         }
-        .msg-animate { animation: fadeInUp 0.35s ease-out; }
+        .msg-animate { animation: fadeInUp 0.3s ease-out; }
+
+        /* Option buttons */
+        .options-wrap { display: flex; flex-direction: column; gap: 8px; max-width: 85%; width: 100%; }
+        .option-btn {
+            display: block;
+            width: 100%;
+            text-align: left;
+            padding: 11px 16px;
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: 12px;
+            font-size: 13.5px;
+            font-family: var(--font-body);
+            color: var(--text);
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.15s;
+        }
+        .option-btn:hover {
+            border-color: var(--purple);
+            background: rgba(139,92,246,0.08);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 16px rgba(139, 92, 246, 0.15);
+        }
+
+        .yesno-wrap { display: flex; gap: 10px; }
+        .btn-yes {
+            padding: 11px 24px;
+            background: var(--gradient);
+            border: none;
+            border-radius: 12px;
+            font-size: 13.5px;
+            font-family: var(--font-body);
+            color: #fff;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.15s;
+        }
+        .btn-yes:hover { opacity: 0.9; transform: translateY(-1px); }
+        .btn-no {
+            padding: 11px 24px;
+            background: transparent;
+            border: 1px solid var(--border-subtle);
+            border-radius: 12px;
+            font-size: 13.5px;
+            font-family: var(--font-body);
+            color: var(--text);
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.15s;
+        }
+        .btn-no:hover { border-color: var(--purple); background: rgba(139,92,246,0.06); }
+
+        /* Results card */
+        .results-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            border-top-left-radius: 4px;
+            padding: 24px 20px;
+            max-width: 90%;
+            width: 100%;
+        }
+        .results-card h3 {
+            font-family: var(--font-display);
+            font-weight: 700;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+            color: var(--text-muted);
+            text-align: center;
+            margin-bottom: 16px;
+        }
+        .results-headline {
+            text-align: center;
+            margin-bottom: 16px;
+        }
+        .results-headline p.label {
+            font-size: 12px;
+            color: var(--text-muted);
+            font-style: italic;
+            margin-bottom: 4px;
+        }
+        .results-headline .amount {
+            font-family: var(--font-display);
+            font-size: 32px;
+            font-weight: 800;
+            background: var(--gradient-text);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .results-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(255,255,255,0.03);
+            border: 1px solid var(--border-subtle);
+            padding: 10px 14px;
+            border-radius: 10px;
+            margin-bottom: 8px;
+        }
+        .results-row .label { font-size: 12px; color: var(--text-muted); font-weight: 500; }
+        .results-row .value { font-weight: 700; font-size: 14px; color: #34d399; }
+        .results-rocs {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid var(--border-subtle);
+            padding: 12px 14px;
+            border-radius: 10px;
+            text-align: center;
+            margin-bottom: 12px;
+        }
+        .results-rocs .label {
+            font-size: 12px;
+            color: var(--text-muted);
+            font-style: italic;
+            margin-bottom: 4px;
+        }
+        .results-rocs .value {
+            font-family: var(--font-display);
+            font-size: 22px;
+            font-weight: 700;
+            background: var(--gradient-text);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .results-footer {
+            font-size: 11px;
+            color: var(--text-muted);
+            font-style: italic;
+            text-align: center;
+            opacity: 0.7;
+        }
+
+        /* Findings card */
+        .findings-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            border-top-left-radius: 4px;
+            padding: 16px 18px;
+            max-width: 85%;
+        }
+        .findings-card .card-title {
+            font-family: var(--font-display);
+            font-weight: 700;
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+            background: var(--gradient-text);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 10px;
+        }
+        .findings-card p {
+            font-size: 13px;
+            color: var(--text);
+            line-height: 1.5;
+            margin-bottom: 4px;
+        }
+        .findings-card strong { color: #fff; }
+        .findings-card .desc-text { color: var(--text-muted); font-style: italic; }
+
+        /* Input area */
+        #inputArea {
+            border-top: 1px solid var(--border-subtle);
+            padding: 16px 20px;
+            flex-shrink: 0;
+        }
+        .input-wrap {
+            display: flex;
+            gap: 10px;
+        }
+        #userInput {
+            flex: 1;
+            padding: 12px 16px;
+            background: rgba(255,255,255,0.04);
+            border: 1px solid var(--border-subtle);
+            border-radius: 12px;
+            color: var(--text);
+            font-family: var(--font-body);
+            font-size: 13.5px;
+            outline: none;
+            transition: border-color 0.15s;
+        }
+        #userInput::placeholder { color: var(--text-muted); opacity: 0.6; }
+        #userInput:focus { border-color: var(--purple); box-shadow: 0 0 0 2px rgba(139,92,246,0.15); }
+
+        #sendBtn {
+            padding: 12px 22px;
+            background: var(--gradient);
+            border: none;
+            border-radius: 12px;
+            color: #fff;
+            font-family: var(--font-display);
+            font-weight: 700;
+            font-size: 13.5px;
+            cursor: pointer;
+            transition: all 0.15s;
+            white-space: nowrap;
+        }
+        #sendBtn:hover { opacity: 0.9; transform: translateY(-1px); }
 
         @keyframes pulse-ring {
-            0% { box-shadow: 0 0 0 0 rgba(129, 140, 248, 0.4); }
-            70% { box-shadow: 0 0 0 8px rgba(129, 140, 248, 0); }
-            100% { box-shadow: 0 0 0 0 rgba(129, 140, 248, 0); }
+            0% { box-shadow: 0 0 0 0 rgba(139, 92, 246, 0.35); }
+            70% { box-shadow: 0 0 0 8px rgba(139, 92, 246, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(139, 92, 246, 0); }
         }
         .pulse-ring { animation: pulse-ring 2s infinite; }
 
-        #chatMessages::-webkit-scrollbar { width: 6px; }
-        #chatMessages::-webkit-scrollbar-track { background: transparent; }
-        #chatMessages::-webkit-scrollbar-thumb { background: #d1d5db; border-radius: 3px; }
-
-        .results-card {
-            background: linear-gradient(135deg, #f9fafb 0%, #eef2ff 100%);
+        /* CTA button inside bot messages */
+        .cta-btn {
+            display: inline-block;
+            width: 100%;
+            text-align: center;
+            text-decoration: none;
+            background: var(--gradient);
+            color: #fff;
+            font-family: var(--font-display);
+            font-weight: 700;
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            padding: 14px 20px;
+            border-radius: 12px;
+            transition: all 0.15s;
         }
-
-        .option-btn {
-            transition: all 0.15s ease;
-        }
-        .option-btn:hover {
-            transform: translateY(-1px);
-            box-shadow: 0 4px 12px rgba(129, 140, 248, 0.3);
-        }
+        .cta-btn:hover { opacity: 0.9; transform: translateY(-1px); }
     </style>
 </head>
-<body class="bg-gray-100 min-h-screen flex items-center justify-center p-4">
+<body>
 
-    <div class="w-full max-w-lg bg-white rounded-2xl shadow-2xl overflow-hidden border border-gray-200 flex flex-col" style="height: min(700px, 90vh);">
+    <div class="lightbox-overlay"></div>
+
+    <div class="modal">
         <!-- Header -->
-        <div class="bg-black px-6 py-4 text-white flex items-center gap-3 shrink-0">
-            <div class="w-10 h-10 rounded-full bg-brandPurple flex items-center justify-center text-lg font-bold">OC</div>
+        <div class="modal-header">
+            <div class="header-icon">OC</div>
             <div>
-                <h1 class="text-sm font-bold uppercase tracking-wide">Onsite Commission Calculator</h1>
-                <p class="text-gray-400 text-xs">Estimate your incremental sales lift</p>
+                <div class="header-title">Onsite Commission Calculator</div>
+                <div class="header-subtitle">Estimate your incremental sales lift</div>
             </div>
+            <button class="close-btn" onclick="window.parent.postMessage('closeChat','*')" title="Close">&times;</button>
         </div>
 
         <!-- Chat Messages -->
-        <div id="chatMessages" class="flex-1 overflow-y-auto px-4 py-4 space-y-3">
-        </div>
+        <div id="chatMessages"></div>
 
         <!-- Input Area -->
-        <div id="inputArea" class="border-t border-gray-200 px-4 py-3 shrink-0">
-            <div class="flex gap-2">
-                <input type="text" id="userInput" placeholder="Type your answer..."
-                    class="flex-1 px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-brandPurple focus:border-brandPurple outline-none text-sm"
-                    autocomplete="off">
-                <button id="sendBtn" onclick="handleSend()"
-                    class="bg-brandPurple hover:opacity-90 text-white px-5 py-3 rounded-xl font-semibold text-sm transition-all pulse-ring">
-                    Send
-                </button>
+        <div id="inputArea">
+            <div class="input-wrap">
+                <input type="text" id="userInput" placeholder="Type your answer..." autocomplete="off">
+                <button id="sendBtn" onclick="handleSend()" class="pulse-ring">Send</button>
             </div>
         </div>
     </div>
@@ -180,10 +590,10 @@
 
     function addBotMessage(html, extraClass = '') {
         const wrapper = document.createElement('div');
-        wrapper.className = 'flex items-start gap-2 msg-animate ' + extraClass;
+        wrapper.className = 'msg-row msg-animate ' + extraClass;
         wrapper.innerHTML = `
-            <div class="w-7 h-7 rounded-full bg-brandPurple flex items-center justify-center text-white text-xs font-bold shrink-0 mt-0.5">OC</div>
-            <div class="bg-gray-100 rounded-2xl rounded-tl-md px-4 py-3 max-w-[85%] text-sm text-gray-800 leading-relaxed">${html}</div>
+            <div class="bot-avatar">OC</div>
+            <div class="bot-bubble">${html}</div>
         `;
         chatMessages.appendChild(wrapper);
         scrollToBottom();
@@ -191,39 +601,32 @@
 
     function addUserMessage(text) {
         const wrapper = document.createElement('div');
-        wrapper.className = 'flex justify-end msg-animate';
-        wrapper.innerHTML = `
-            <div class="bg-brandPurple text-white rounded-2xl rounded-tr-md px-4 py-3 max-w-[80%] text-sm leading-relaxed">${text}</div>
-        `;
+        wrapper.className = 'msg-row user msg-animate';
+        wrapper.innerHTML = `<div class="user-bubble">${text}</div>`;
         chatMessages.appendChild(wrapper);
         scrollToBottom();
     }
 
     function addResultsCard(results) {
         const wrapper = document.createElement('div');
-        wrapper.className = 'flex items-start gap-2 msg-animate';
+        wrapper.className = 'msg-row msg-animate';
         wrapper.innerHTML = `
-            <div class="w-7 h-7 rounded-full bg-brandPurple flex items-center justify-center text-white text-xs font-bold shrink-0 mt-0.5">OC</div>
-            <div class="results-card rounded-2xl rounded-tl-md px-5 py-5 max-w-[90%] border border-indigo-100 w-full">
-                <h3 class="text-xs font-black text-brandDark uppercase tracking-widest mb-4 text-center">Your Custom Onsite Commission Report</h3>
-
-                <div class="text-center mb-4">
-                    <p class="text-xs text-brandDark italic mb-1">Estimated Monthly Incremental Sales Lift:</p>
-                    <p class="text-3xl font-black text-brandPurple">${results.incrementalFormatted}</p>
+            <div class="bot-avatar">OC</div>
+            <div class="results-card">
+                <h3>Your Custom Onsite Commission Report</h3>
+                <div class="results-headline">
+                    <p class="label">Estimated Monthly Incremental Sales Lift:</p>
+                    <div class="amount">${results.incrementalFormatted}</div>
                 </div>
-
-                <div class="space-y-2 mb-4">
-                    <div class="flex justify-between items-center bg-white px-3 py-2.5 rounded-lg border border-gray-100">
-                        <span class="text-xs text-brandDark font-medium">Sales Lift</span>
-                        <span class="text-green-600 font-bold text-sm">+${results.salesLiftPct}%</span>
-                    </div>
-                    <div class="bg-white px-3 py-2.5 rounded-lg border border-gray-100 text-center">
-                        <p class="text-xs text-brandDark italic mb-1">Return on Commission Spend (ROCS) at 5%:</p>
-                        <p class="text-xl font-bold text-brandPurple">${results.rocs}x</p>
-                    </div>
+                <div class="results-row">
+                    <span class="label">Sales Lift</span>
+                    <span class="value">+${results.salesLiftPct}%</span>
                 </div>
-
-                <p class="text-xs text-brandDark/60 italic text-center">ROCS = The return on each commission dollar invested in Creator UGC</p>
+                <div class="results-rocs">
+                    <p class="label">Return on Commission Spend (ROCS) at 5%:</p>
+                    <div class="value">${results.rocs}x</div>
+                </div>
+                <p class="results-footer">ROCS = The return on each commission dollar invested in Creator UGC</p>
             </div>
         `;
         chatMessages.appendChild(wrapper);
@@ -232,16 +635,16 @@
 
     function addOptionButtons(options) {
         const wrapper = document.createElement('div');
-        wrapper.className = 'flex items-start gap-2 msg-animate';
+        wrapper.className = 'msg-row msg-animate';
         wrapper.id = 'optionButtons';
         let btnsHtml = options.map(opt =>
             `<button onclick="selectOption('${opt.value}', '${opt.label.replace(/'/g, "\\'")}')"
-                class="option-btn block w-full text-left px-4 py-2.5 bg-white border border-gray-200 rounded-xl text-sm text-brandDark hover:border-brandPurple hover:bg-indigo-50 font-medium">${opt.label}</button>`
+                class="option-btn">${opt.label}</button>`
         ).join('');
 
         wrapper.innerHTML = `
-            <div class="w-7 h-7 shrink-0"></div>
-            <div class="space-y-2 max-w-[85%] w-full">${btnsHtml}</div>
+            <div style="width:28px;flex-shrink:0"></div>
+            <div class="options-wrap">${btnsHtml}</div>
         `;
         chatMessages.appendChild(wrapper);
         scrollToBottom();
@@ -249,15 +652,13 @@
 
     function addYesNoButtons() {
         const wrapper = document.createElement('div');
-        wrapper.className = 'flex items-start gap-2 msg-animate';
+        wrapper.className = 'msg-row msg-animate';
         wrapper.id = 'optionButtons';
         wrapper.innerHTML = `
-            <div class="w-7 h-7 shrink-0"></div>
-            <div class="flex gap-2">
-                <button onclick="selectOption('yes', 'Yes')"
-                    class="option-btn px-6 py-2.5 bg-brandPurple text-white rounded-xl text-sm font-semibold hover:opacity-90">Yes, please!</button>
-                <button onclick="selectOption('no', 'No thanks')"
-                    class="option-btn px-6 py-2.5 bg-white border border-gray-200 rounded-xl text-sm text-brandDark font-semibold hover:border-brandPurple">No thanks</button>
+            <div style="width:28px;flex-shrink:0"></div>
+            <div class="yesno-wrap">
+                <button onclick="selectOption('yes', 'Yes')" class="btn-yes">Yes, please!</button>
+                <button onclick="selectOption('no', 'No thanks')" class="btn-no">No thanks</button>
             </div>
         `;
         chatMessages.appendChild(wrapper);
@@ -266,14 +667,14 @@
 
     function showTypingIndicator() {
         const wrapper = document.createElement('div');
-        wrapper.className = 'flex items-start gap-2';
+        wrapper.className = 'msg-row';
         wrapper.id = 'typingIndicator';
         wrapper.innerHTML = `
-            <div class="w-7 h-7 rounded-full bg-brandPurple flex items-center justify-center text-white text-xs font-bold shrink-0 mt-0.5">OC</div>
-            <div class="bg-gray-100 rounded-2xl rounded-tl-md px-4 py-3 flex gap-1.5 items-center">
-                <div class="w-2 h-2 bg-gray-400 rounded-full typing-dot"></div>
-                <div class="w-2 h-2 bg-gray-400 rounded-full typing-dot"></div>
-                <div class="w-2 h-2 bg-gray-400 rounded-full typing-dot"></div>
+            <div class="bot-avatar">OC</div>
+            <div class="typing-bubble">
+                <div class="typing-dot"></div>
+                <div class="typing-dot"></div>
+                <div class="typing-dot"></div>
             </div>
         `;
         chatMessages.appendChild(wrapper);
@@ -448,17 +849,17 @@
         if (findings.platform) lines.push(`<strong>Platform:</strong> ${findings.platform}`);
         if (findings.estimatedSkus) lines.push(`<strong>Estimated Products:</strong> ~${formatNumber(findings.estimatedSkus)} SKUs`);
         if (findings.ugcPlatforms.length) lines.push(`<strong>UGC Tools Detected:</strong> ${findings.ugcPlatforms.join(', ')}`);
-        if (findings.description) lines.push(`<strong>About:</strong> <span class="text-gray-500 italic">"${findings.description}"</span>`);
+        if (findings.description) lines.push(`<strong>About:</strong> <span class="desc-text">"${findings.description}"</span>`);
 
         if (lines.length === 0) return;
 
         const wrapper = document.createElement('div');
-        wrapper.className = 'flex items-start gap-2 msg-animate';
+        wrapper.className = 'msg-row msg-animate';
         wrapper.innerHTML = `
-            <div class="w-7 h-7 rounded-full bg-brandPurple flex items-center justify-center text-white text-xs font-bold shrink-0 mt-0.5">OC</div>
-            <div class="bg-indigo-50 border border-indigo-100 rounded-2xl rounded-tl-md px-4 py-4 max-w-[85%] text-sm text-gray-800 leading-relaxed space-y-1.5">
-                <p class="text-xs font-bold text-brandPurple uppercase tracking-widest mb-2">Site Research Results</p>
-                ${lines.map(l => `<p class="text-sm">${l}</p>`).join('')}
+            <div class="bot-avatar">OC</div>
+            <div class="findings-card">
+                <p class="card-title">Site Research Results</p>
+                ${lines.map(l => `<p>${l}</p>`).join('')}
             </div>
         `;
         chatMessages.appendChild(wrapper);
@@ -726,7 +1127,7 @@
                     const resultsNoEmail = calculate();
                     if (resultsNoEmail) submitData(resultsNoEmail);
                     await botTypeThenSay(`No problem at all! If you'd like to explore what an Onsite Commission Program can do for your business, you can book a meeting with our team anytime.`, 600);
-                    await botTypeThenSay(`<a href="https://www.onsiteaffiliate.com/appointments" target="_blank" onclick="trackEvent('calculator_book_meeting_clicked')" class="inline-block w-full text-center bg-brandPurple text-white font-bold py-3 px-4 rounded-xl hover:opacity-90 transition-all text-sm uppercase tracking-wide">Book a Meeting With Our Team</a>`, 600);
+                    await botTypeThenSay(`<a href="https://www.onsiteaffiliate.com/appointments" target="_blank" onclick="trackEvent('calculator_book_meeting_clicked')" class="cta-btn">Book a Meeting With Our Team</a>`, 600);
                     await botTypeThenSay(`Thanks for using the calculator, <strong>${data.name}</strong>! Feel free to come back anytime.`, 600);
                     setInputVisible(false);
                 }
@@ -752,14 +1153,14 @@
                         addBotMessage(`Your analysis has been sent to <strong>${data.email}</strong>! Keep an eye on your inbox.`);
                         setTimeout(async () => {
                             await botTypeThenSay(`When you're ready to get started, our team would love to walk you through the next steps.`, 700);
-                            await botTypeThenSay(`<a href="https://www.onsiteaffiliate.com/appointments" target="_blank" onclick="trackEvent('calculator_book_meeting_clicked')" class="inline-block w-full text-center bg-brandPurple text-white font-bold py-3 px-4 rounded-xl hover:opacity-90 transition-all text-sm uppercase tracking-wide">Book a Meeting With Our Team</a>`, 600);
+                            await botTypeThenSay(`<a href="https://www.onsiteaffiliate.com/appointments" target="_blank" onclick="trackEvent('calculator_book_meeting_clicked')" class="cta-btn">Book a Meeting With Our Team</a>`, 600);
                             await botTypeThenSay(`Thanks for chatting, <strong>${data.name}</strong>! We look forward to helping you unlock new revenue through Onsite Commissions.`, 600);
                         }, 400);
                     }).catch(() => {
                         removeTypingIndicator();
                         addBotMessage(`I had a little trouble sending that, but don't worry — your results are right here in the chat! You can also reach our team directly.`);
                         setTimeout(async () => {
-                            await botTypeThenSay(`<a href="https://www.onsiteaffiliate.com/appointments" target="_blank" onclick="trackEvent('calculator_book_meeting_clicked')" class="inline-block w-full text-center bg-brandPurple text-white font-bold py-3 px-4 rounded-xl hover:opacity-90 transition-all text-sm uppercase tracking-wide">Book a Meeting With Our Team</a>`, 600);
+                            await botTypeThenSay(`<a href="https://www.onsiteaffiliate.com/appointments" target="_blank" onclick="trackEvent('calculator_book_meeting_clicked')" class="cta-btn">Book a Meeting With Our Team</a>`, 600);
                         }, 400);
                     });
                 }
