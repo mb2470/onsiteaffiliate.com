@@ -546,7 +546,7 @@
 // Default: "onsiteaffiliate2025" → replace HASH below with your hash
 // To generate: open browser console, run:
 //   crypto.subtle.digest('SHA-256', new TextEncoder().encode('yourpassword')).then(b=>console.log([...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,'0')).join('')))
-const PASS_HASH = bc6bfd848ebd7819c9a82bf124d65e7f739d08e002601e23bb906aacd40a3d81; // Set to null to accept ANY non-empty password for testing. Replace with hash for production.
+const PASS_HASH = 'bc6bfd848ebd7819c9a82bf124d65e7f739d08e002601e23bb906aacd40a3d81'; // Set to null to accept ANY non-empty password for testing. Replace with hash for production.
 
 async function sha256(str) {
   const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(str));
