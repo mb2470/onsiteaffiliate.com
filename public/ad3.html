@@ -294,7 +294,7 @@
   @keyframes softFadeIn { to { opacity: 1; } }
 
   .play-btn {
-    position: absolute; top: clamp(12px, 2.33vw, 28px); right: clamp(16px, 3.67vw, 44px);
+    position: fixed; top: 16px; right: 16px;
     z-index: 200; width: 40px; height: 40px; border-radius: 50%;
     border: 1px solid rgba(255,255,255,0.2); background: rgba(0,0,0,0.6);
     color: #fff; font-size: 16px; cursor: pointer;
@@ -634,18 +634,16 @@
       paused = false;
       startTime = null;
       playBtn.textContent = '⏸';
-      playBtn.style.opacity = '0';
-      playBtn.style.pointerEvents = 'none';
+      playBtn.style.opacity = '0.3';
     } else if (paused) {
       paused = false;
-      playBtn.style.opacity = '0';
-      playBtn.style.pointerEvents = 'none';
+      playBtn.textContent = '⏸';
+      playBtn.style.opacity = '0.3';
     } else {
       paused = true;
       if (startTime) pausedAt = performance.now() - startTime;
       playBtn.textContent = '▶';
       playBtn.style.opacity = '1';
-      playBtn.style.pointerEvents = 'auto';
     }
   });
 
