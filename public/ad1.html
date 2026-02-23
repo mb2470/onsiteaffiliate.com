@@ -298,12 +298,12 @@
     e.stopPropagation();
     if (playBtn.textContent === 'REPLAY') {
       resetAll(); pausedAt = 0; paused = false; startTime = null;
-      playBtn.textContent = 'PAUSE'; playBtn.style.opacity = '0.3';
+      playBtn.textContent = 'PAUSE'; playBtn.style.opacity = '0'; playBtn.style.pointerEvents = 'none';
     } else if (paused) {
-      paused = false; playBtn.textContent = 'PAUSE'; playBtn.style.opacity = '0.3';
+      paused = false; playBtn.style.opacity = '0'; playBtn.style.pointerEvents = 'none';
     } else {
       paused = true; if (startTime) pausedAt = performance.now() - startTime;
-      playBtn.textContent = 'PLAY'; playBtn.style.opacity = '1';
+      playBtn.textContent = 'PLAY'; playBtn.style.opacity = '1'; playBtn.style.pointerEvents = 'auto';
     }
   });
 
