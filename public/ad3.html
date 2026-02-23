@@ -634,16 +634,18 @@
       paused = false;
       startTime = null;
       playBtn.textContent = '⏸';
-      playBtn.style.opacity = '0.3';
+      playBtn.style.opacity = '0';
+      playBtn.style.pointerEvents = 'none';
     } else if (paused) {
       paused = false;
-      playBtn.textContent = '⏸';
-      playBtn.style.opacity = '0.3';
+      playBtn.style.opacity = '0';
+      playBtn.style.pointerEvents = 'none';
     } else {
       paused = true;
       if (startTime) pausedAt = performance.now() - startTime;
       playBtn.textContent = '▶';
       playBtn.style.opacity = '1';
+      playBtn.style.pointerEvents = 'auto';
     }
   });
 
