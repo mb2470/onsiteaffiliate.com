@@ -93,6 +93,19 @@ export function usePresentations() {
     );
   };
 
+  // Update prepared_for
+  const updatePreparedFor = async (id, preparedFor) => {
+    const { error: err } = await supabase
+      .from('presentations')
+      .update({ prepared_for: preparedFor.trim() })
+      .eq('id', id);
+
+    if (err) throw new Error(err.message);
+    setPresentations((prev) =>
+      prev.map((p) => (p.id === id ? { ...p, prepared_for: preparedFor.trim() } : p))
+    );
+  };
+
   // Update logo
   const updateLogo = async (id, logoUrl) => {
     const { error: err } = await supabase
@@ -165,6 +178,7 @@ export function usePresentations() {
     error,
     create,
     updateSlides,
+    updatePreparedFor,
     updateLogo,
     updateName,
     duplicate,
