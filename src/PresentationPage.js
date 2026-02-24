@@ -248,6 +248,7 @@ export default function PresentationPage({ slug }) {
 
   const name = presentation.customer_name;
   const logoUrl = presentation.logo_url || null;
+  const preparedFor = presentation.prepared_for || null;
 
   const handlePrint = () => window.print();
 
@@ -262,6 +263,12 @@ export default function PresentationPage({ slug }) {
           </a>
           <span className="pres-nav__sep">|</span>
           <span className="pres-nav__customer">{name}</span>
+          {preparedFor && (
+            <>
+              <span className="pres-nav__sep">|</span>
+              <span className="pres-nav__prepared">Prepared for {preparedFor}</span>
+            </>
+          )}
         </div>
         <div className="pres-nav__right">
           <span className="pres-nav__counter">{currentSlide + 1} / {total}</span>

@@ -81,7 +81,7 @@ export default function AdminPage() {
 function AdminPanel({ onLogout }) {
   const {
     presentations, loading, error,
-    create, updateSlides, updateLogo, duplicate, remove,
+    create, updateSlides, updatePreparedFor, updateLogo, duplicate, remove,
   } = usePresentations();
 
   const [newName, setNewName] = useState('');
@@ -390,6 +390,19 @@ function AdminPanel({ onLogout }) {
                 <div>
                   <h4>{pres.customer_name}</h4>
                   <p className="admin-slug">/p/{pres.slug}</p>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginTop: 4 }}>
+                    <span className="admin-muted" style={{ fontSize: '0.72rem', whiteSpace: 'nowrap' }}>Prepared for:</span>
+                    <input
+                      className="admin-input admin-input--inline"
+                      placeholder="Contact name"
+                      defaultValue={pres.prepared_for || ''}
+                      onBlur={(e) => {
+                        const val = e.target.value.trim();
+                        if (val !== (pres.prepared_for || '')) updatePreparedFor(pres.id, val);
+                      }}
+                      onKeyDown={(e) => { if (e.key === 'Enter') e.target.blur(); }}
+                    />
+                  </div>
                   <p className="admin-muted" style={{ fontSize: '0.72rem' }}>
                     Created {new Date(pres.created_at).toLocaleDateString()}
                   </p>

@@ -57,3 +57,4 @@ create policy "Anon can delete presentations"
 -- Run this separately if you already have the table created
 -- ============================================================
 -- ALTER TABLE public.presentations ADD COLUMN IF NOT EXISTS logo_url text;
+-- ALTER TABLE public.presentations ADD COLUMN IF NOT EXISTS prepared_for text;
