@@ -8,18 +8,21 @@ public_folder: "/images"
 collections:
   - name: "blog"
     label: "Blog Posts"
-    file: "src/content/blogs.json"
     description: "Manage blog posts. Content supports markdown: use ### for subheadings, blank lines for paragraphs, and **text** for bold."
-    fields:
+    files:
       - name: "posts"
-        label: "Posts"
-        widget: "list"
+        label: "All Posts"
+        file: "src/content/blogs.json"
         fields:
-          - { name: "slug", label: "URL Slug", widget: "string", hint: "URL-friendly identifier (e.g. my-blog-post). No spaces or special characters." }
-          - { name: "title", label: "Title", widget: "string" }
-          - { name: "sub", label: "Subtitle", widget: "string" }
-          - { name: "date", label: "Date", widget: "string", hint: "e.g. Feb 3, 2026" }
-          - { name: "body", label: "Content", widget: "markdown" }
+          - name: "posts"
+            label: "Posts"
+            widget: "list"
+            fields:
+              - { name: "slug", label: "URL Slug", widget: "string", hint: "URL-friendly identifier (e.g. my-blog-post). No spaces or special characters." }
+              - { name: "title", label: "Title", widget: "string" }
+              - { name: "sub", label: "Subtitle", widget: "string" }
+              - { name: "date", label: "Date", widget: "string", hint: "e.g. Feb 3, 2026" }
+              - { name: "body", label: "Content", widget: "markdown" }
 
   - name: "site-content"
     label: "Site Content"
