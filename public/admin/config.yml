@@ -8,11 +8,11 @@ public_folder: "/images"
 collections:
   - name: "blog"
     label: "Blog Posts"
-    description: "Manage blog posts. Content supports markdown: use ### for subheadings, blank lines for paragraphs, and **text** for bold."
     files:
       - name: "posts"
         label: "All Posts"
         file: "src/content/blogs.json"
+        description: "Manage blog posts. Content supports markdown: use ### for subheadings, blank lines for paragraphs, and **text** for bold."
         fields:
           - name: "posts"
             label: "Posts"
