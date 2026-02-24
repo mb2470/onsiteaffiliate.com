@@ -352,8 +352,20 @@
 .admin-field textarea:focus { border-color: rgba(139,92,246,0.4); }
 .admin-body { padding: 28px 40px; }
 
+/* ── Admin Login ── */
+.admin-login {
+  display: flex; align-items: center; justify-content: center;
+  min-height: 100vh; padding: 24px;
+}
+.admin-login__box {
+  width: 100%; max-width: 380px;
+  background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 16px; padding: 36px 32px;
+}
+
 @media (max-width: 600px) {
   .admin-header, .admin-section, .admin-body { padding-left: 20px; padding-right: 20px; }
   .admin-create-row { flex-direction: column; }
   .admin-pres-row { flex-direction: column; align-items: flex-start; }
+  .admin-login__box { padding: 28px 20px; }
 }
