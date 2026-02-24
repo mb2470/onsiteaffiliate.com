@@ -55,7 +55,7 @@ function SlideHero({ slide, name }) {
         </div>
         <div className="pres-flywheel-wrap">
           <img
-            src="/images/FC-Flywheel_Static.png"
+            src="/images/flywheel.png"
             alt="Onsite Affiliate Flywheel"
             className="pres-flywheel-img"
           />

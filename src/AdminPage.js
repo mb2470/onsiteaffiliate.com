@@ -1,7 +1,84 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { supabase } from './supabaseClient';
 import { usePresentations } from './usePresentations';
 
 export default function AdminPage() {
+  const [session, setSession] = useState(null);
+  const [authLoading, setAuthLoading] = useState(true);
+  const [authError, setAuthError] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [signingIn, setSigningIn] = useState(false);
+
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session: s } }) => {
+      setSession(s);
+      setAuthLoading(false);
+    });
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, s) => {
+      setSession(s);
+    });
+    return () => subscription.unsubscribe();
+  }, []);
+
+  const handleLogin = async (e) => {
+    e.preventDefault();
+    setSigningIn(true);
+    setAuthError('');
+    const { error: err } = await supabase.auth.signInWithPassword({ email, password });
+    if (err) setAuthError(err.message);
+    setSigningIn(false);
+  };
+
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+    setSession(null);
+  };
+
+  if (authLoading) {
+    return (
+      <div className="admin-page">
+        <div className="admin-login">
+          <p className="admin-muted">Loading…</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!session) {
+    return (
+      <div className="admin-page">
+        <div className="admin-login">
+          <div className="admin-login__box">
+            <div style={{ textAlign: 'center', marginBottom: 24 }}>
+              <img src="/images/logo-icon-white.png" alt="" style={{ height: 36, marginBottom: 12 }} />
+              <h2 style={{ fontFamily: 'var(--font-display)', fontSize: '1.3rem', fontWeight: 800, color: 'white', margin: 0 }}>Admin Login</h2>
+              <p className="admin-muted" style={{ marginTop: 4 }}>Sign in to manage presentations</p>
+            </div>
+            <form onSubmit={handleLogin}>
+              <label className="admin-field">
+                <span>Email</span>
+                <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} required autoFocus />
+              </label>
+              <label className="admin-field">
+                <span>Password</span>
+                <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} required />
+              </label>
+              {authError && <p className="admin-error">{authError}</p>}
+              <button type="submit" className="admin-btn admin-btn--primary" style={{ width: '100%', marginTop: 8 }} disabled={signingIn}>
+                {signingIn ? 'Signing in…' : 'Sign In'}
+              </button>
+            </form>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  return <AdminPanel onLogout={handleLogout} />;
+}
+
+function AdminPanel({ onLogout }) {
   const {
     presentations, loading, error,
     create, updateSlides, updateLogo, duplicate, remove,
@@ -133,9 +210,12 @@ export default function AdminPage() {
             <button className="admin-btn admin-btn--ghost" onClick={() => { setEditingId(null); setEditSlides(null); }}>← Back</button>
             <h2 style={{ margin: 0 }}>Editing: {pres?.customer_name}</h2>
           </div>
-          <button className="admin-btn admin-btn--primary" onClick={saveEdit} disabled={saving}>
-            {saving ? 'Saving…' : 'Save Changes'}
-          </button>
+          <div style={{ display: 'flex', gap: 8 }}>
+            <button className="admin-btn admin-btn--primary" onClick={saveEdit} disabled={saving}>
+              {saving ? 'Saving…' : 'Save Changes'}
+            </button>
+            <button className="admin-btn admin-btn--ghost" onClick={onLogout}>Logout</button>
+          </div>
         </div>
 
         <div className="admin-body" style={{ maxWidth: 900 }}>
@@ -191,7 +271,7 @@ export default function AdminPage() {
   // ═══════════════ LIST MODE ═══════════════
   return (
     <div className="admin-page">
-      <div className="admin-header">
+      <div className="admin-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
         <div>
           <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 8 }}>
             <a href="#/" className="admin-logo">
@@ -202,6 +282,7 @@ export default function AdminPage() {
           <h1>Presentation Admin</h1>
           <p className="admin-description">Create and manage customer presentations at onsiteaffiliate.com/p/&lt;customer&gt;</p>
         </div>
+        <button className="admin-btn admin-btn--ghost" onClick={onLogout}>Logout</button>
       </div>
 
       {/* Create - Step Flow */}
