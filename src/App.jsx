@@ -97,6 +97,7 @@ import ecommerceContent from "./content/solutions-ecommerce.json";
 import brandSocialContent from "./content/solutions-brand-social.json";
 import measurementContent from "./content/solutions-measurement.json";
 import faqContent from "./content/faq.json";
+import blogsContent from "./content/blogs.json";
 
 /* ───────────── SCROLL ANIMATION HOOK ───────────── */
 function useReveal() {
@@ -773,107 +774,35 @@ function BlogModal({ blog, onClose }) {
   );
 }
 
+/* ───────────── MARKDOWN RENDERER ───────────── */
+function renderMarkdown(md) {
+  if (!md) return null;
+  const blocks = md.split(/\n\n+/);
+  return blocks.map((block, i) => {
+    block = block.trim();
+    if (!block) return null;
+    if (block.startsWith('### ')) {
+      return <h3 key={i}>{block.slice(4)}</h3>;
+    }
+    const parts = block.split(/(\*\*.*?\*\*)/g);
+    const content = parts.map((part, j) => {
+      if (part.startsWith('**') && part.endsWith('**')) {
+        return <strong key={j}>{part.slice(2, -2)}</strong>;
+      }
+      return part;
+    });
+    return <p key={i}>{content}</p>;
+  });
+}
+
 /* ───────────── BLOG DATA ───────────── */
-const blogs = [
-    {
-      slug: "ugc-below-the-fold",
-      title: "Why UGC Below the Fold is Your Secret Conversion Weapon",
-      sub: "Closing \"The Scroll Gap\"",
-      date: "Feb 3, 2026",
-      content: (
-        <>
-          <p>Most brands obsess over above-the-fold content — hero images, product titles, and star ratings. But the real conversion battle happens below the fold, where high-intent shoppers are actively scrolling to validate their purchase decision.</p>
-          <p>We call this "The Scroll Gap" — the distance between initial interest and the Add to Cart button. Shoppers who scroll past the first viewport are signaling strong purchase intent. They're looking for reasons to buy, not reasons to leave.</p>
-          <h3>Why Below-the-Fold UGC Converts</h3>
-          <p>When a shopper scrolls down a product page, they've already passed the basic qualification stage. They know what the product is and roughly what it costs. What they need now is validation — and that's exactly what authentic creator videos provide.</p>
-          <p>Creator UGC placed in the scroll path acts as a conversion accelerator. It provides the social proof, real-world context, and objection handling that branded content simply can't match. Our data shows that shoppers who interact with creator video content below the fold convert at significantly higher rates than those who don't.</p>
-          <h3>The Opportunity</h3>
-          <p>The below-the-fold zone is prime real estate that most brands are underutilizing. By placing authentic creator content where high-intent shoppers are already looking, you can close the scroll gap and turn browsers into buyers — without changing a single thing about your above-the-fold experience.</p>
-        </>
-      ),
-    },
-    {
-      slug: "economics-of-onsite-commissions",
-      title: "The Economics of Onsite Commissions",
-      sub: "The \"Found Money\" in Onsite Commissions",
-      date: "Jan 26, 2026",
-      content: (
-        <>
-          <p>When most brands hear "commission," they think of another line item eating into their margins. But Onsite Commissions flip that equation entirely. Instead of paying upfront for content that may or may not perform, you're paying a small percentage only after a verified sale occurs.</p>
-          <h3>The "Found Money" Model</h3>
-          <p>Think about the creator content you've already paid for — campaign videos, influencer partnerships, UGC from gifted product. Most of that content lives on social media for a few days, gets some engagement, and then disappears into the algorithmic void.</p>
-          <p>With Onsite Commissions, that same content gets a second life on your product pages, working 24/7 to convert high-intent shoppers. The commission you pay is a fraction of the incremental revenue that content generates. It's not a cost — it's found money.</p>
-          <h3>Why the Math Works</h3>
-          <p>Onsite Commission rates are typically 1–5% of the sale price — significantly lower than traditional affiliate commissions or the cost of producing new branded content. When you factor in the conversion lift that authentic creator content provides, the ROI is compelling. You're paying pennies on the dollar for content that's actively driving sales.</p>
-        </>
-      ),
-    },
-    {
-      slug: "stop-sending-free-product",
-      title: "Stop Sending Free Product: Why Onsite Commissions Are the Secret to Scaling Creator UGC",
-      sub: "Creators Want a Piece of the Pie",
-      date: "Jan 24, 2026",
-      content: (
-        <>
-          <p>The traditional UGC playbook is broken. Brands send free product to creators, hope for authentic content in return, and cross their fingers that it performs. It's expensive, unpredictable, and doesn't scale.</p>
-          <h3>Creators Want a Piece of the Pie</h3>
-          <p>Today's creators understand the value of their content. They know that a well-made product video on a high-traffic PDP can drive thousands of dollars in sales. Sending them a $50 product and hoping for the best isn't just inefficient — it's disrespectful of their contribution.</p>
-          <p>Onsite Commissions align incentives perfectly. Creators earn ongoing passive income every time their content drives a sale. The better their content performs, the more they earn. This creates a virtuous cycle where creators are motivated to produce their best work.</p>
-          <h3>Scale Without the Overhead</h3>
-          <p>When you shift from gifting to commissioning, you eliminate the overhead of managing product shipments, tracking deliverables, and chasing content deadlines. Creators produce content because they want to earn — and you only pay when that content actually converts.</p>
-        </>
-      ),
-    },
-    {
-      slug: "secrets-to-making-onsite-commissions-work",
-      title: "The Secrets to Making Onsite Commissions Work",
-      sub: "The UGC Game Changer",
-      date: "Jan 19, 2026",
-      content: (
-        <>
-          <p>Onsite Commissions have the potential to transform how brands think about creator content. But like any powerful tool, the results depend on execution. Here are the key principles that separate successful programs from underperforming ones.</p>
-          <h3>The UGC Game Changer</h3>
-          <p>The most successful Onsite Commission programs share a few common traits: they prioritize authentic content over polished production, they give creators creative freedom, and they use data to optimize placement and attribution.</p>
-          <h3>Key Principles</h3>
-          <p>First, start with your existing creator relationships. You likely already have creators who love your products — they're your best candidates for an onsite commission program. Second, set clear attribution windows and commission rates that are fair to creators while protecting your margins. Third, use A/B testing to optimize where and how creator content appears on your PDPs.</p>
-          <p>The brands seeing the best results treat their Onsite Commission program as a core part of their conversion strategy, not an afterthought. When you give it the attention it deserves, the results speak for themselves.</p>
-        </>
-      ),
-    },
-    {
-      slug: "30-years-exceptional-service",
-      title: "30 Years, Hundreds of Partners: What I've Learned About Exceptional Service",
-      sub: "The Human Element in a Tech-Driven World",
-      date: "Jan 19, 2026",
-      content: (
-        <>
-          <p>In three decades of working across affiliate marketing, AdTech, and creator commerce, I've worked with hundreds of brands, platforms, and partners. The technology has changed dramatically, but the principles of exceptional service have remained remarkably consistent.</p>
-          <h3>The Human Element in a Tech-Driven World</h3>
-          <p>In an industry increasingly driven by algorithms and automation, the human element is more important than ever. The best partnerships aren't built on technology alone — they're built on trust, communication, and a genuine commitment to the partner's success.</p>
-          <p>Every successful engagement I've been part of shared one thing in common: the service provider treated the client's business as their own. That means proactive communication, honest assessments (even when the news isn't great), and a relentless focus on outcomes over activity.</p>
-          <h3>What Exceptional Looks Like</h3>
-          <p>Exceptional service means being available when you're needed, not just when it's convenient. It means understanding the client's business deeply enough to anticipate problems before they arise. And it means measuring success by the client's results, not your own billable hours.</p>
-        </>
-      ),
-    },
-    {
-      slug: "why-affiliate-platforms-fail",
-      title: "Why Affiliate Platforms Fail for Onsite Commissions",
-      sub: "Misalignment of Intent",
-      date: "Jan 13, 2026",
-      content: (
-        <>
-          <p>If you've tried to run an Onsite Commission program through a traditional affiliate platform, you've probably been frustrated by the results. That's not because the concept doesn't work — it's because affiliate platforms were never designed for this use case.</p>
-          <h3>Misalignment of Intent</h3>
-          <p>Traditional affiliate platforms are built around one core mechanic: the referral link. A creator posts a link on their blog, social media, or website. A follower clicks that link and lands on your site. If they buy, the creator earns a commission.</p>
-          <p>Onsite Commissions work completely differently. The creator's content is already on your site. There's no referral link, no external traffic source, no click to track. The value comes from the content's ability to convert shoppers who are already browsing your products.</p>
-          <h3>The Technical Gap</h3>
-          <p>Most affiliate platforms explicitly exclude "internal" traffic from commission eligibility. Their tracking is designed to credit external referrals, not onsite content engagement. Trying to force-fit onsite commissions into this model leads to inaccurate attribution, missed commissions, and frustrated creators.</p>
-          <p>What you need is a purpose-built solution that tracks content engagement, video playback, and purchase attribution in a single integrated system — exactly what Onsite Affiliate provides.</p>
-        </>
-      ),
-    },
-  ];
+const blogs = blogsContent.posts.map(post => ({
+  slug: post.slug,
+  title: post.title,
+  sub: post.sub,
+  date: post.date,
+  content: renderMarkdown(post.body),
+}));
 
 /* ───────────── BLOG POST PAGE ───────────── */
 function BlogPostPage({ slug }) {
