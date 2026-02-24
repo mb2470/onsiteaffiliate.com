@@ -98,6 +98,9 @@ import brandSocialContent from "./content/solutions-brand-social.json";
 import measurementContent from "./content/solutions-measurement.json";
 import faqContent from "./content/faq.json";
 import blogsContent from "./content/blogs.json";
+import PresentationPage from "./PresentationPage";
+import AdminPage from "./AdminPage";
+import "./presentations.css";
 
 /* ───────────── SCROLL ANIMATION HOOK ───────────── */
 function useReveal() {
@@ -1446,6 +1449,8 @@ export default function App() {
     trackPageView(path, title);
   }, [path]);
 
+  const isPresentationRoute = path === "/admin" || path.startsWith("/p/");
+
   // Auto-open calculator when navigating to /calculator
   useEffect(() => {
     if (path === '/calculator' && !calcOpen) {
@@ -1462,7 +1467,12 @@ export default function App() {
   }, [path]);
 
   let page;
-  if (path.startsWith("/blog/")) {
+  if (path === "/admin") {
+    page = <AdminPage />;
+  } else if (path.startsWith("/p/")) {
+    const slug = path.replace("/p/", "");
+    page = <PresentationPage slug={slug} />;
+  } else if (path.startsWith("/blog/")) {
     const slug = path.replace("/blog/", "");
     page = <BlogPostPage slug={slug} />;
   } else {
@@ -1501,10 +1511,10 @@ export default function App() {
 
   return (
     <>
-      <Navbar onCalcOpen={() => { setCalcOpen(true); trackEvent('calculator_opened', { source: 'navbar' }); }} />
+      {!isPresentationRoute && <Navbar onCalcOpen={() => { setCalcOpen(true); trackEvent('calculator_opened', { source: 'navbar' }); }} />}
       {page}
-      <Footer />
-      <CalculatorLightbox isOpen={calcOpen} onClose={() => { setCalcOpen(false); if (path === '/calculator') window.location.hash = '/'; }} />
+      {!isPresentationRoute && <Footer />}
+      {!isPresentationRoute && <CalculatorLightbox isOpen={calcOpen} onClose={() => { setCalcOpen(false); if (path === '/calculator') window.location.hash = '/'; }} />}
     </>
   );
 }
