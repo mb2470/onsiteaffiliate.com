@@ -35,6 +35,7 @@ const routes = {
   "/solutions/brand-social": "brand-social",
   "/solutions/measurement": "measurement",
   "/resources": "resources",
+  "/creator-terms": "creator-terms",
   "/brand-terms": "brand-terms",
   "/data-processing-addendum": "dpa",
   "/privacy": "privacy",
@@ -482,6 +483,7 @@ function Footer() {
           </div>
           <div>
             <h4>Legal</h4>
+            <Link to="/creator-terms">Creator Terms</Link>
             <Link to="/brand-terms">Brand Terms</Link>
             <Link to="/data-processing-addendum">Data Processing Addendum</Link>
             <Link to="/privacy">Privacy Policy</Link>
@@ -1242,6 +1244,112 @@ function BrandTermsPage() {
   );
 }
 
+/* ───────────── CREATOR TERMS PAGE ───────────── */
+function CreatorTermsPage() {
+  return (
+    <LegalPage title="Creator Terms and Conditions" lastUpdated="January 2025">
+      <p>Please review the full agreement below.</p>
+
+      <h3>Onsite Affiliate Network Agreement</h3>
+      <p>This Onsite Affiliate Network Agreement (&quot;Agreement&quot;) is by and between Onsite Affiliate, Inc. (&quot;OA&quot;) and you (the &quot;Creator&quot; and together the &quot;Parties&quot;).</p>
+
+      <h3>1. Platform Terms</h3>
+      <p>To participate in the Onsite Affiliate Network (&quot;Platform&quot;), you must:</p>
+      <ul>
+        <li>Be at least 18 years of age.</li>
+        <li>Maintain a valid bank account for commission payments.</li>
+        <li>Provide accurate and complete registration information.</li>
+        <li>Comply with all applicable laws and regulations.</li>
+      </ul>
+      <p>You are responsible for maintaining the confidentiality of your account credentials and for all activities that occur under your account.</p>
+
+      <h3>2. Content License Grant</h3>
+      <p>You retain full ownership of all content you create. By uploading content to the Platform, you grant OA a non-exclusive, worldwide, royalty-free license to:</p>
+      <ul>
+        <li>Display, reproduce, and distribute your content on the Platform.</li>
+        <li>Sublicense your content to Partner brands for Onsite Partner Placements on their websites and applications.</li>
+        <li>Create derivative works as necessary for technical display purposes (resizing, formatting, etc.).</li>
+      </ul>
+      <p>This license is granted solely for ecommerce purposes on Partner sites and apps. OA will not use your content for any other commercial purpose without your explicit consent.</p>
+
+      <h3>3. Onsite Partner Commissions</h3>
+      <p>Commission rates, attribution windows, and payment terms (&quot;Onsite Partner Commission Terms&quot;) are determined by each Partner brand and displayed on your Creator Dashboard.</p>
+      <ul>
+        <li>Commission rates may vary by Partner and product category.</li>
+        <li>Attribution models and time windows are set by each Partner.</li>
+        <li>Payment schedules and minimum payout thresholds are specified per Partner.</li>
+        <li>OA will display all applicable commission terms transparently on your Dashboard.</li>
+      </ul>
+      <p>OA does not guarantee any specific commission rates or earnings. Partners may modify their commission terms at any time, with changes reflected on your Dashboard.</p>
+
+      <h3>4. Onsite Partner Placements</h3>
+      <p>Placements are not guaranteed. Partners have sole discretion over which content is displayed on their sites and where it appears. OA does not guarantee:</p>
+      <ul>
+        <li>That your content will be selected for any Partner placement.</li>
+        <li>Specific placement locations, visibility, or duration.</li>
+        <li>Any minimum number of views, clicks, or impressions.</li>
+      </ul>
+
+      <h3>5. Content Removal</h3>
+      <p>You may remove your content from the Platform at any time through your Dashboard. Upon removal:</p>
+      <ul>
+        <li>OA will remove your content from active Onsite Partner Placements within 30 days.</li>
+        <li>Partners may retain cached or archived copies for record-keeping purposes.</li>
+        <li>Pending commissions for sales attributed before removal will still be paid.</li>
+      </ul>
+      <p>The 30-day removal window allows Partners to update their sites and replace content appropriately.</p>
+
+      <h3>6. Prohibited Content</h3>
+      <p>You agree not to upload content that:</p>
+      <ul>
+        <li>Contains sexually explicit or pornographic material.</li>
+        <li>Depicts violence, gore, or harmful activities.</li>
+        <li>Features minors in any inappropriate context.</li>
+        <li>Infringes on intellectual property rights of others.</li>
+        <li>Contains false, misleading, or deceptive claims.</li>
+        <li>Violates any applicable laws or regulations.</li>
+        <li>Promotes illegal activities or substances.</li>
+      </ul>
+      <p>OA reserves the right to remove any content that violates these guidelines and may terminate your account for repeated violations.</p>
+
+      <h3>7. Representations and Warranties</h3>
+      <p>You represent and warrant that:</p>
+      <ul>
+        <li>You own or have all necessary rights to the content you upload.</li>
+        <li>Your content does not infringe any third-party rights.</li>
+        <li>You have obtained all necessary permissions from individuals appearing in your content.</li>
+        <li>All claims made in your content are truthful and accurate.</li>
+      </ul>
+
+      <h3>8. Limitation of Liability</h3>
+      <p><strong>TO THE MAXIMUM EXTENT PERMITTED BY LAW, OA SHALL NOT BE LIABLE FOR ANY INDIRECT, INCIDENTAL, SPECIAL, CONSEQUENTIAL, OR PUNITIVE DAMAGES, INCLUDING LOSS OF PROFITS, DATA, OR OTHER INTANGIBLE LOSSES, REGARDLESS OF WHETHER OA HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES.</strong></p>
+      <p>OA&apos;s total liability under this Agreement shall not exceed the total commissions paid to you in the twelve (12) months preceding the claim.</p>
+
+      <h3>9. Indemnification</h3>
+      <p>You agree to indemnify, defend, and hold harmless OA, its affiliates, and Partners from any claims, damages, losses, or expenses (including attorneys&apos; fees) arising from your content, your breach of this Agreement, or your violation of any rights of a third party.</p>
+
+      <h3>10. Termination</h3>
+      <p>Either party may terminate this Agreement at any time for any reason. Upon termination:</p>
+      <ul>
+        <li>Your content will be removed per Section 5 (30-day window).</li>
+        <li>Pending commissions will be paid according to standard schedules.</li>
+        <li>Your access to the Platform will be revoked.</li>
+      </ul>
+      <p>OA may immediately terminate your account for violation of this Agreement, fraudulent activity, or other conduct detrimental to OA or its Partners.</p>
+
+      <h3>11. Modifications</h3>
+      <p>OA may modify this Agreement at any time. Material changes will be communicated via email or Dashboard notification at least 30 days before taking effect. Continued use of the Platform after changes take effect constitutes acceptance of the modified Agreement.</p>
+
+      <h3>12. Governing Law</h3>
+      <p>This Agreement shall be governed by and construed in accordance with the laws of the State of California, without regard to its conflict of laws provisions. Any disputes arising under this Agreement shall be resolved exclusively in the state or federal courts located in Orange County, California.</p>
+
+      <h3>13. Entire Agreement</h3>
+      <p>This Agreement constitutes the entire agreement between the Parties regarding the subject matter hereof and supersedes all prior or contemporaneous agreements, understandings, and communications.</p>
+      <p>By checking the agreement box and creating your account, you acknowledge that you have read, understood, and agree to be bound by this Agreement.</p>
+    </LegalPage>
+  );
+}
+
 /* ───────────── DATA PROCESSING ADDENDUM PAGE ───────────── */
 function DPAPage() {
   return (
@@ -1440,6 +1548,7 @@ export default function App() {
       '/': 'Home', '/about': 'About', '/solutions/ecommerce': 'E-Commerce',
       '/solutions/brand-social': 'Brand & Social', '/solutions/measurement': 'Measurement',
       '/resources': 'Resources', '/appointments': 'Appointments',
+      '/creator-terms': 'Creator Terms',
       '/brand-terms': 'Brand Terms',
       '/data-processing-addendum': 'DPA', '/privacy': 'Privacy Policy',
       '/calculator': 'Calculator',
@@ -1494,6 +1603,9 @@ export default function App() {
         break;
       case "/appointments":
         page = <AppointmentsPage />;
+        break;
+      case "/creator-terms":
+        page = <CreatorTermsPage />;
         break;
       case "/brand-terms":
         page = <BrandTermsPage />;
